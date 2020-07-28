@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Cookie {
 
 	class COOKIE_API WindowResizeEvent : public Event

@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Cookie {
 
 	class COOKIE_API MouseMovedEvent : public Event

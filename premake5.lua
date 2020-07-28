@@ -19,6 +19,9 @@ project "CookieEngine"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "ckpch.h"
+    pchsource "CookieEngine/src/ckpch.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",
