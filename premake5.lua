@@ -1,5 +1,6 @@
 workspace "CookieEngine"
     architecture "x64"
+    startproject "Sandbox"
 
     configurations
     {
