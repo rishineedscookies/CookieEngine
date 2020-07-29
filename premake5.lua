@@ -11,6 +11,12 @@ workspace "CookieEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to solution directory
+IncludeDir = {}
+IncludeDir["GLFW"] = "CookieEngine/vendor/GLFW/include"
+
+include "CookieEngine/vendor/GLFW"
+
 project "CookieEngine"
     location "CookieEngine"
     kind "SharedLib"
@@ -22,6 +28,7 @@ project "CookieEngine"
     pchheader "ckpch.h"
     pchsource "CookieEngine/src/ckpch.cpp"
 
+    
     files
     {
         "%{prj.name}/src/**.h",
@@ -31,7 +38,14 @@ project "CookieEngine"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/vendor/spdlog/include"
+        "%{prj.name}/vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"

@@ -1,3 +1,7 @@
 [submodule "CookieEngine/vendor/spdlog"]
 	path = CookieEngine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "CookieEngine/vendor/GLFW"]
+	path = CookieEngine/vendor/GLFW
+	url = https://github.com/rishineedscookies/glfw
+	branch = master
