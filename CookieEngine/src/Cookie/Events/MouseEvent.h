@@ -63,7 +63,7 @@ namespace Cookie {
 		int m_Button;
 	};
 
-	class COOKIE_API MouseButtonPressedEvent : public KeyEvent
+	class COOKIE_API MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -79,7 +79,7 @@ namespace Cookie {
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class COOKIE_API MouseButtonReleasedEvent : public KeyEvent
+	class COOKIE_API MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)
