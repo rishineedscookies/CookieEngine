@@ -66,14 +66,17 @@ project "CookieEngine"
 
     filter "configurations:Debug"
         defines "CK_DEBUG"
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "CK_RELEASE"
+        buildoptions "/MD"
         optimize "On"
 
     filter "configurations:Dist"
         defines "CK_DIST"
+        buildoptions "/MD"
         optimize "On"
 
 project "Sandbox"
@@ -113,12 +116,15 @@ project "Sandbox"
 
     filter "configurations:Debug"
         defines "CK_DEBUG"
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "CK_RELEASE"
+        buildoptions "/MD"
         optimize "On"
 
     filter "configurations:Dist"
         defines "CK_DIST"
+        buildoptions "/MD"
         optimize "On"
