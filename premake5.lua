@@ -14,8 +14,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to solution directory
 IncludeDir = {}
 IncludeDir["GLFW"] = "CookieEngine/vendor/GLFW/include"
+IncludeDir["Glad"] = "CookieEngine/vendor/Glad/include"
+
 
 include "CookieEngine/vendor/GLFW"
+include "CookieEngine/vendor/Glad"
 
 project "CookieEngine"
     location "CookieEngine"
@@ -23,7 +26,7 @@ project "CookieEngine"
     language "C++"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/j%{prj.name}")
 
     pchheader "ckpch.h"
     pchsource "CookieEngine/src/ckpch.cpp"
@@ -39,12 +42,14 @@ project "CookieEngine"
     {
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}"
     }
 
     links
     {
         "GLFW",
+        "Glad",
         "opengl32.lib"
     }
 
@@ -56,7 +61,8 @@ project "CookieEngine"
         defines 
         {
             "CK_PLATFORM_WINDOWS",
-            "CK_BUILD_DLL"
+            "CK_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
 
         postbuildcommands

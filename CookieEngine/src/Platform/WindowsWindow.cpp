@@ -5,6 +5,8 @@
 #include "Cookie/Events/KeyEvent.h"
 #include "Cookie/Events/MouseEvent.h"
 
+#include <glad/glad.h>
+
 namespace Cookie {
 
 	static bool s_GLFWInitialized = false;
@@ -49,6 +51,8 @@ namespace Cookie {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		CK_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
