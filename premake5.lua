@@ -15,10 +15,12 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "CookieEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "CookieEngine/vendor/Glad/include"
+IncludeDir["ImGui"] = "CookieEngine/vendor/imgui"
 
 
 include "CookieEngine/vendor/GLFW"
 include "CookieEngine/vendor/Glad"
+include "CookieEngine/vendor/imgui"
 
 project "CookieEngine"
     location "CookieEngine"
@@ -43,13 +45,15 @@ project "CookieEngine"
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}"
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}"
     }
 
     links
     {
         "GLFW",
         "Glad",
+        "ImGui",
         "opengl32.lib"
     }
 

@@ -5,3 +5,6 @@
 	path = CookieEngine/vendor/GLFW
 	url = https://github.com/rishineedscookies/glfw
 	branch = master
+[submodule "CookieEngine/vendor/imgui"]
+	path = CookieEngine/vendor/imgui
+	url = https://github.com/rishineedscookies/imgui
