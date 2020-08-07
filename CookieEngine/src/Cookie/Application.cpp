@@ -1,5 +1,6 @@
 #include "ckpch.h"
 #include "Application.h"
+#include "Cookie/Input/Input.h"
 
 #include "Cookie/Log.h"
 
@@ -13,7 +14,7 @@ namespace Cookie {
 
 	Application::Application()
 	{
-		CK_CORE_ASSERT(!s_Instance, "Application already exists!")
+		CK_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
 		m_Window = std::unique_ptr<Window>(Window::Create());

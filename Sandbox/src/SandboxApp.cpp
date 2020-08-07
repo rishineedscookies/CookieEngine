@@ -8,12 +8,23 @@ public:
 
 	void OnUpdate() override
 	{
-		CK_INFO("ExampleLayer::Update");
+		if (Cookie::Input::GetKeyDown(CK_KEY_TAB))
+		{
+			CK_TRACE("Tab key is pressed (poll)!");
+		}
 	}
 
 	void OnEvent(Cookie::Event& event) override
 	{
-		CK_TRACE(event);
+		if(event.GetEventType() == Cookie::EventType::KeyPressed)
+		{
+			Cookie::KeyPressedEvent& e = (Cookie::KeyPressedEvent&)event;
+			if (e.GetKeyCode() == CK_KEY_TAB)
+			{
+				CK_TRACE("Tab key is pressed (event)!");
+			}
+			CK_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 
