@@ -10,6 +10,9 @@ public:
 
 	void OnUpdate() override
 	{
+		mathfu::Vector<float, 3> v1(1.0f, 2.0f, 3.0f), v2(3.0f, 2.5f, 0.5f), v3;
+		v3 = v1 + v2;
+		CK_TRACE("{0} {1} {2}", v3.x, v3.y, v3.z);
 
 		if (Cookie::Input::GetKeyDown(CK_KEY_TAB))
 		{

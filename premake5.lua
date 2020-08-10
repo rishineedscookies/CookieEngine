@@ -17,7 +17,7 @@ IncludeDir["GLFW"] = "CookieEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "CookieEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "CookieEngine/vendor/imgui"
 IncludeDir["MathFu"] = "CookieEngine/vendor/MathFu/include"
-IncludeDir["Vectorial"] = "CookieEngine/vendor/MathFu/dependencies/vectorial/include"
+IncludeDir["Vectorial"] = "CookieEngine/vendor/vectorial/include"
 
 include "CookieEngine/vendor/GLFW"
 include "CookieEngine/vendor/Glad"
@@ -40,7 +40,8 @@ project "CookieEngine"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
-        "%{prj.name}/vendor/MathFu/include/**.h"
+        "%{prj.name}/vendor/MathFu/include/**.h",
+        "%{prj.name}/vendor/vectorial/include/**.h"
     }
 
     includedirs

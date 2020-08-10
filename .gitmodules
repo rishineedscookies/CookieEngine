@@ -11,3 +11,6 @@
 [submodule "CookieEngine/vendor/MathFu"]
 	path = CookieEngine/vendor/MathFu
 	url = https://github.com/google/mathfu
+[submodule "CookieEngine/vendor/vectorial"]
+	path = CookieEngine/vendor/vectorial
+	url = https://github.com/scoopr/vectorial
