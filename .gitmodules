@@ -8,3 +8,6 @@
 [submodule "CookieEngine/vendor/imgui"]
 	path = CookieEngine/vendor/imgui
 	url = https://github.com/rishineedscookies/imgui
+[submodule "CookieEngine/vendor/MathFu"]
+	path = CookieEngine/vendor/MathFu
+	url = https://github.com/google/mathfu

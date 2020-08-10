@@ -22,6 +22,7 @@ namespace Cookie {
 
 		unsigned int id;
 		glGenVertexArrays(1, &id);
+
 	}
 
 	Application::~Application()

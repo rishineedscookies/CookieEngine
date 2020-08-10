@@ -16,11 +16,13 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "CookieEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "CookieEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "CookieEngine/vendor/imgui"
-
+IncludeDir["MathFu"] = "CookieEngine/vendor/MathFu/include"
+IncludeDir["Vectorial"] = "CookieEngine/vendor/MathFu/dependencies/vectorial/include"
 
 include "CookieEngine/vendor/GLFW"
 include "CookieEngine/vendor/Glad"
 include "CookieEngine/vendor/imgui"
+
 
 project "CookieEngine"
     location "CookieEngine"
@@ -37,7 +39,8 @@ project "CookieEngine"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/MathFu/include/**.h"
     }
 
     includedirs
@@ -46,7 +49,9 @@ project "CookieEngine"
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.MathFu}",
+        "%{IncludeDir.Vectorial}"
     }
 
     links
@@ -106,7 +111,9 @@ project "Sandbox"
     includedirs
     {
         "CookieEngine/vendor/spdlog/include",
-        "CookieEngine/src"
+        "CookieEngine/src",
+        "%{IncludeDir.MathFu}",
+        "%{IncludeDir.Vectorial}"
     }
 
     links

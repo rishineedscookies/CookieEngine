@@ -1,4 +1,6 @@
 #include <Cookie.h>
+#include <mathfu/vector.h>
+#include <vectorial/vec4f.h>
 
 class ExampleLayer : public Cookie::Layer
 {
@@ -8,6 +10,7 @@ public:
 
 	void OnUpdate() override
 	{
+
 		if (Cookie::Input::GetKeyDown(CK_KEY_TAB))
 		{
 			CK_TRACE("Tab key is pressed (poll)!");
