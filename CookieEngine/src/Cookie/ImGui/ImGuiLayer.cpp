@@ -1,11 +1,9 @@
 #include "ckpch.h"
 #include "ImGuiLayer.h"
 
-#include "imgui.h"
-
-#define IMGUI_IMPL_API
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
 
 #include "Cookie/Application.h"
@@ -79,7 +77,7 @@ namespace Cookie {
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		Window& window = app.GetWindow();
-		io.DisplaySize = ImVec2(window.GetWidth(), window.GetHeight());
+		io.DisplaySize = ImVec2((float)window.GetWidth(), (float)window.GetHeight());
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
