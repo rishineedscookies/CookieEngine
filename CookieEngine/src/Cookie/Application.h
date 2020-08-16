@@ -6,6 +6,7 @@
 #include "LayerStack.h"
 #include "Events/Event.h"
 #include "Cookie/Events/ApplicationEvent.h"
+#include "Cookie/ImGui/ImGuiLayer.h"
 
 
 namespace Cookie {
@@ -29,6 +30,7 @@ namespace Cookie {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 	private:

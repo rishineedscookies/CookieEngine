@@ -113,6 +113,7 @@ project "Sandbox"
     {
         "CookieEngine/vendor/spdlog/include",
         "CookieEngine/src",
+        "CookieEngine/vendor",
         "%{IncludeDir.MathFu}",
         "%{IncludeDir.Vectorial}"
     }
