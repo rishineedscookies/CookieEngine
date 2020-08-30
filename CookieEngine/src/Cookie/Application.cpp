@@ -4,7 +4,8 @@
 
 #include "Cookie/Log.h"
 
-#include <glad/glad.h>
+#include "Cookie/Renderer/Renderer.h"
+#include <GLFW/glfw3.h>
 
 namespace Cookie {
 
@@ -20,12 +21,8 @@ namespace Cookie {
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-		unsigned int id;
-		glGenVertexArrays(1, &id);
-
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-
 	}
 
 	Application::~Application()
@@ -37,12 +34,14 @@ namespace Cookie {
 	{
 		while (m_Running)
 		{
-			glClearColor(1, 0, 1, 0.5);
-			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_Time.LastTime = m_Time.CurrentTime;
+			m_Time.CurrentTime = glfwGetTime();
+			m_Time.DeltaTime = m_Time.CurrentTime - m_Time.LastTime;
 
 			for (Layer* layer : m_LayerStack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(m_Time);
 			}
 
 			m_ImGuiLayer->Begin();

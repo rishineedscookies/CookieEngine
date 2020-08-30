@@ -4,6 +4,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Cookie/Renderer/RenderingContext.h"
+
 namespace Cookie {
 
 
@@ -28,7 +30,9 @@ namespace Cookie {
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 	private:
+
 		GLFWwindow* m_Window;
+		RenderingContext* m_Context;
 
 		struct WindowData
 		{

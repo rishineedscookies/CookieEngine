@@ -8,6 +8,12 @@
 #include "Cookie/Events/ApplicationEvent.h"
 #include "Cookie/ImGui/ImGuiLayer.h"
 
+#include "Cookie/Renderer/Shader.h"
+#include "Cookie/Renderer/Buffer.h"
+#include "Cookie/Renderer/VertexArray.h"
+#include "Cookie/Renderer/OrthographicCamera.h"
+
+#include "Cookie/Core/Time.h"
 
 namespace Cookie {
 
@@ -33,6 +39,8 @@ namespace Cookie {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		Time m_Time;
+
 	private:
 		static Application* s_Instance;
 	};
