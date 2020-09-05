@@ -18,6 +18,7 @@ IncludeDir["Glad"] = "CookieEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "CookieEngine/vendor/imgui"
 IncludeDir["MathFu"] = "CookieEngine/vendor/MathFu/include"
 IncludeDir["Vectorial"] = "CookieEngine/vendor/vectorial/include"
+IncludeDir["stb_image"] = "CookieEngine/vendor/stb_image"
 
 include "CookieEngine/vendor/GLFW"
 include "CookieEngine/vendor/Glad"
@@ -42,6 +43,8 @@ project "CookieEngine"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/stb_image/**.h",
+        "%{prj.name}/vendor/stb_image/**.cpp",
         "%{prj.name}/vendor/MathFu/include/**.h",
         "%{prj.name}/vendor/vectorial/include/**.h"
     }
@@ -59,7 +62,8 @@ project "CookieEngine"
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.MathFu}",
-        "%{IncludeDir.Vectorial}"
+        "%{IncludeDir.Vectorial}",
+        "%{IncludeDir.stb_image}"
     }
 
     links

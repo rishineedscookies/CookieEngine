@@ -16,6 +16,7 @@
 #include "Cookie/Renderer/Buffer.h"
 #include "Cookie/Renderer/VertexArray.h"
 #include "Cookie/Renderer/Shader.h"
+#include "Cookie/Renderer/Texture.h"
 #include "Cookie/Renderer/OrthographicCamera.h"
 
 

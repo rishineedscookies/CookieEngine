@@ -10,11 +10,14 @@ namespace Cookie {
 	class Renderer
 	{
 	public:
+		
+		static void Init();
+		static void OnFrameBufferResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(OrthographicCamera& camera); // TODO: Take in scene params
 		static void EndScene();
 
-		static void Submit(const std::shared_ptr<Shader> shader, const std::shared_ptr<VertexArray>& vertexArray);
+		static void Submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const mathfu::mat4& transform = mathfu::mat4::Identity());
 
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }

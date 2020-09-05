@@ -17,6 +17,8 @@ namespace Cookie {
 		const mathfu::quat& GetRotation() const { return m_Rotation; }
 		void SetRotation(const mathfu::quat& rotation);
 
+		const mathfu::mat4& GetViewMatrix() const { return m_ViewMatrix; }
+		const mathfu::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
 		const mathfu::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 
 	private:
