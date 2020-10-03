@@ -1,7 +1,7 @@
 #include "ckpch.h"
 #include "Cookie/Input/Input.h"
 
-#include "Cookie/Application.h"
+#include "Cookie/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Cookie {

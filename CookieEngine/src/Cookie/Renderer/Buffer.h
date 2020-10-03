@@ -105,7 +105,10 @@ namespace Cookie
 	public:
 		virtual ~VertexBuffer() {}
 
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
+
+		virtual void SetData(const void* data, uint32_t size) = 0;
+
 
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 		virtual const BufferLayout& GetLayout() const = 0;
@@ -120,7 +123,7 @@ namespace Cookie
 	public:
 		virtual ~IndexBuffer() {}
 
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 
 		virtual uint32_t GetCount() const = 0;
 

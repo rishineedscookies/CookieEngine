@@ -17,6 +17,12 @@ namespace Cookie {
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
 	void OpenGLVertexBuffer::SetLayout(const BufferLayout& layout)
 	{
 		m_Layout = layout;

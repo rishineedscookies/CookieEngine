@@ -1,6 +1,8 @@
 #include "ckpch.h"
 #include "Renderer.h"
 
+#include "Renderer2D.h"
+
 
 
 namespace Cookie {
@@ -10,6 +12,7 @@ namespace Cookie {
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::OnFrameBufferResize(uint32_t width, uint32_t height)

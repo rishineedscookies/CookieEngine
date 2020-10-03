@@ -2,7 +2,7 @@
 
 #include "ckpch.h"
 
-#include "Cookie/Core.h"
+#include "Cookie/Core/Core.h"
 #include "Cookie/Events/Event.h"
 
 namespace Cookie {

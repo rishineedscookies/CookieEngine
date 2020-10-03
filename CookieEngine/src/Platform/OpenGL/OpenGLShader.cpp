@@ -73,6 +73,12 @@ namespace Cookie {
 		glUniform1i(location, value);
 	}
 
+	void OpenGLShader::UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform1iv(location, count, values);
+	}
+
 	void OpenGLShader::UploadUniformFloat(const std::string& name, const float value) const
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());

@@ -6,7 +6,7 @@
 #include <examples/imgui_impl_opengl3.h>
 
 
-#include "Cookie/Application.h"
+#include "Cookie/Core/Application.h"
 
 // Temporary
 #include <GLFW/glfw3.h>

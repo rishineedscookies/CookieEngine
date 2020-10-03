@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Cookie/Input/Input.h"
 
-#include "Cookie/Log.h"
+#include "Cookie/Core/Log.h"
 
 #include "Cookie/Renderer/Renderer.h"
 #include <GLFW/glfw3.h>
@@ -38,7 +38,7 @@ namespace Cookie {
 		{
 
 			m_Time.LastTime = m_Time.CurrentTime;
-			m_Time.CurrentTime = glfwGetTime();
+			m_Time.CurrentTime = (float) glfwGetTime();
 			m_Time.DeltaTime = m_Time.CurrentTime - m_Time.LastTime;
 
 			if (!m_Minimized)

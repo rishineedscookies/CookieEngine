@@ -1,7 +1,7 @@
 #pragma once
 #include "ckpch.h"
 
-#include "Cookie/Core.h"
+#include "Cookie/Core/Core.h"
 
 namespace Cookie {
 

@@ -25,6 +25,7 @@ namespace Cookie {
 
 		virtual void UploadUniformBool(const std::string& name, const bool value) const = 0;
 		virtual void UploadUniformInt(const std::string& name, const int value) const = 0;
+		virtual void UploadUniformIntArray(const std::string& name, const int* values, uint32_t count) const = 0;
 		virtual void UploadUniformFloat(const std::string& name, const float value) const = 0;
 		virtual void UploadUniformFloat2(const std::string& name, const mathfu::vec2& value) const = 0;
 		virtual void UploadUniformFloat3(const std::string& name, const mathfu::vec3& value) const = 0;

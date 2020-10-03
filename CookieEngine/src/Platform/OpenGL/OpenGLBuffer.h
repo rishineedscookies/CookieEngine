@@ -10,6 +10,8 @@ namespace Cookie {
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer();
 
+		virtual void SetData(const void* data, uint32_t size) override;
+
 		virtual void SetLayout(const BufferLayout& layout) override;
 		virtual const BufferLayout& GetLayout() const override { return m_Layout; }
 

@@ -18,7 +18,7 @@ namespace Cookie {
 		}
 	}
 
-	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -26,13 +26,13 @@ namespace Cookie {
 			CK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(vertices, size);
+			return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		default:
 			return nullptr;
 		}
 	}
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -40,7 +40,7 @@ namespace Cookie {
 			CK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLIndexBuffer(indices, count);
+			return CreateRef<OpenGLIndexBuffer>(indices, count);
 		default:
 			return nullptr;
 		}
