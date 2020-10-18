@@ -127,7 +127,6 @@ namespace Cookie {
 		data->QuadMaterial->UploadUniformData();
 
 		uint32_t dataSize = (uint32_t) ((uint8_t*)data->QuadVertexBufferPtr - (uint8_t*)data->QuadVertexBufferBase);
-		CK_CORE_INFO("{0}, VertexBufferBase: {1}", data->QuadMaterial->GetName(), dataSize);
 		data->QuadVertexArray->GetIndexBuffer()->Bind();
 		data->QuadVertexBuffer->Bind();
 		data->QuadVertexBuffer->SetData(data->QuadVertexBufferBase, dataSize);

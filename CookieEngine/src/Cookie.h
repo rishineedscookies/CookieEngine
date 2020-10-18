@@ -21,6 +21,8 @@
 #include "Cookie/Renderer/Texture.h"
 #include "Cookie/Renderer/OrthographicCamera.h"
 
+#include "Cookie/Scene/World.h"
+
 
 // --------Entry Point--------------------------
 #include "Cookie/Core/EntryPoint.h"

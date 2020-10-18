@@ -40,7 +40,7 @@ namespace Cookie {
 			m_Time.LastTime = m_Time.CurrentTime;
 			m_Time.CurrentTime = (float) glfwGetTime();
 			m_Time.DeltaTime = m_Time.CurrentTime - m_Time.LastTime;
-
+			CK_CORE_INFO("FPS: {0}", 1 / m_Time.DeltaTime);
 			if (!m_Minimized)
 			{
 				for (Layer* layer : m_LayerStack)
