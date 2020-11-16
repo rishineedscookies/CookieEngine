@@ -1,4 +1,5 @@
 #include <Cookie.h>
+#include <Cookie/Core/EntryPoint.h>
 
 #include <mathfu/vector.h>
 #include <vectorial/vec4f.h>
@@ -8,6 +9,11 @@
 #include "RedMat.h"
 
 #include "PositionComponent.h"
+#include "AABBColliderComponent.h"
+#include "MovementComponent.h"
+#include "TransformComponent.h"
+#include "PhysicsSystem.h"
+#include "MovementSystem.h"
 
 class ExampleLayer : public Cookie::Layer
 {
@@ -15,17 +21,38 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(mathfu::quat::identity)
 	{
+
 		m_World = new Cookie::World();
 
 		m_World->RegisterComponent<PositionComponent>(POSITION_ID);
-	
-		for (int i = 0; i < 10; i++)
-		{
-			Cookie::Entity entity = m_World->AddEntity();
-			PositionComponent* position = m_World->AddComponent<PositionComponent>(entity, POSITION_ID);
-			position->Position.y = i;
-		}
+		m_World->RegisterComponent<AABBColliderComponent>(AABB_COLLIDER_ID);
+		m_World->RegisterComponent<MovementComponent>(MOVEMENT_ID);
+		m_World->RegisterComponent<TransformComponent>(TRANSFORM_ID);
 
+		m_PhysicsSystem = new PhysicsSystem();
+		m_MovementSystem = new MovementSystem();
+
+		m_Player = m_World->AddEntity();
+		m_World->AddComponent<MovementComponent>(m_Player, MOVEMENT_ID);
+		TransformComponent* PlayerTransform = m_World->AddComponent<TransformComponent>(m_Player, TRANSFORM_ID);
+		PlayerTransform->Transform = mathfu::mat4::Transform(mathfu::vec3(0.0f, 1.5f, 0.0f),
+			mathfu::mat3::Identity(),
+			mathfu::vec3(1.0f));
+		Cookie::ComponentManager<TransformComponent>* TransformManager = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
+		TransformComponent* TestComp = &(*TransformManager->ComponentPool)[0];
+		AABBColliderComponent* PlayerCollider = m_World->AddComponent<AABBColliderComponent>(m_Player, AABB_COLLIDER_ID);
+		PlayerCollider->Offset = mathfu::vec3(0.0f);
+		PlayerCollider->HalfExtents = mathfu::vec3(0.5f);
+
+		m_Floor = m_World->AddEntity();
+		m_World->AddComponent<TransformComponent>(m_Floor, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(0.0f),
+		mathfu::mat3::Identity(),
+		mathfu::vec3(1.0f));
+		AABBColliderComponent* FloorCollider = m_World->AddComponent<AABBColliderComponent>(m_Floor, AABB_COLLIDER_ID);
+		FloorCollider->Offset = mathfu::vec3(0.0f);
+		FloorCollider->HalfExtents = mathfu::vec3(0.5f);
+		
+		
 		m_ShaderManager.Load("assets/shaders/Texture.glsl");
 		m_ShaderManager.Load("assets/shaders/FlatColor.glsl");
 		m_TextureShader = Cookie::Shader::Create("assets/shaders/Texture.glsl");
@@ -93,7 +120,8 @@ public:
 		{
 			m_CameraPosition -= m_CameraRotation * mathfu::vec3(0, 0, 1) * m_CameraSpeed * time.DeltaTime;
 		}
-		MovementOnUpdate(time);
+		m_MovementSystem->OnUpdate(m_World, &time);
+		m_PhysicsSystem->OnUpdate(m_World, &time);
 
 		Cookie::RenderCommand::Clear(mathfu::vec4(0.6f, 0.14f, 0.29f, 1.0f));
 
@@ -133,26 +161,18 @@ public:
 		ImGui::End();
 	}
 
-	void MovementOnUpdate(Cookie::Time Time)
-	{
-		std::vector<PositionComponent>* Positions = m_World->GetComponentManager<PositionComponent>(POSITION_ID)->ComponentPool;
-		for (int i = 0; i < Positions->size(); i++)
-		{
-			(*Positions)[i].Position += mathfu::vec3(1.0f, 0.0f, 0.0f) * Time.DeltaTime;
-		}
-	}
-
 	void RenderOnUpdate(Cookie::Time Time)
 	{
-		std::vector<PositionComponent>* Positions = m_World->GetComponentManager<PositionComponent>(POSITION_ID)->ComponentPool;
-		for (int i = 0; i < Positions->size(); i++)
+		Cookie::ComponentManager<TransformComponent>* Transforms = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
+		for (Cookie::size_t i = 0; i < Transforms->Size; i++)
 		{
-			PositionComponent* Position = &(*Positions)[i];
-			mathfu::mat4 transform = mathfu::mat4::Transform(Position->Position, mathfu::quat::identity.ToMatrix(), mathfu::vec3(1));
-			Cookie::Renderer2D::DrawQuad(transform, m_GreenMaterial);
+			Cookie::Entity e = (*Transforms->DenseEntities)[i];
+			if(!e)
+				continue;
+			TransformComponent* Transform = GET_COMPONENT(Transforms, e);
+			Cookie::Renderer2D::DrawQuad(Transform->Transform, m_GreenMaterial);
 		}
 	}
-
 
 private:
 
@@ -170,11 +190,16 @@ private:
 
 	Cookie::OrthographicCamera m_Camera;
 	mathfu::vec3 m_CameraPosition;
-	float m_CameraSpeed = 100.0f;
+	float m_CameraSpeed = 10.0f;
 	mathfu::quat m_CameraRotation;
-	float m_CameraRotSpeed = 3.0f;
+	float m_CameraRotSpeed = 1.0f;
 	float m_ZoomLevel = 1.0f;
 	
+	Cookie::Entity m_Player;
+	PhysicsSystem* m_PhysicsSystem;
+	MovementSystem* m_MovementSystem;
+
+	Cookie::Entity m_Floor;
 };
 
 class Sandbox : public Cookie::Application

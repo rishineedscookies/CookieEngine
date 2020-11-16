@@ -33,7 +33,7 @@ project "CookieEngine"
     staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/j%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "ckpch.h"
     pchsource "CookieEngine/src/ckpch.cpp"

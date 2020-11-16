@@ -1,77 +1,73 @@
 #pragma once
+
+#include "Cookie/Common/Vector.h"
+#include "Cookie/Scene/Entity.h"
 #include "Cookie/Scene/ComponentManager.h"
+
+#include "Cookie/Core/Log.h"
+
+#define GET_POOL(World, ComponentType, ID) World->GetComponentManager<ComponentType>(ID)
+#define GET_COMPONENT(ComponentManager, idx) &(*ComponentManager->ComponentPool)[*ComponentManager->Entities->At(idx)]
 
 namespace Cookie {
 
-	typedef uint32_t Entity;
-
 	struct World
 	{
-		uint32_t EntityIndex = 1;
-		std::vector<size_t> SparseEntities = std::vector<size_t>(5);
-		uint32_t DenseIndex = 0;
-		std::vector<Entity> DenseEntities = std::vector<Entity>(5);
-		std::vector<void*> ComponentManagers = std::vector<void*>(5);
+		size_t EntityIndex = 1;
+		Vector<size_t> SparseEntities = Vector<size_t>(5);
+		size_t DenseIndex = 0;
+		Vector<Entity> DenseEntities = Vector<Entity>(5);
+		Vector<void*> ComponentManagers = Vector<void*>(5);
 		uint32_t ComponentIDIndex = 1;
 		
-		uint32_t AddEntity();
+		Entity AddEntity();
 
 		template<typename Component>
-		Component* AddComponent(uint32_t e, uint32_t ComponentID);
+		Component* AddComponent(Entity e, uint32_t ComponentID);
 
 		template<typename Component>
 		void RegisterComponent(uint32_t ComponentID);
 
 		template<typename Component>
-		ComponentManager<Component>* GetComponentManager(uint32_t ComponentID);
-	};
+		ComponentManager<Component>* GetComponentManager(size_t ComponentID);
 
-	uint32_t World::AddEntity()
-	{
-		if (SparseEntities.capacity() <= EntityIndex)
-		{
-			SparseEntities.resize(EntityIndex * 2);
-		}
-		SparseEntities[EntityIndex] = DenseIndex;
-		if (DenseEntities.capacity() <= DenseIndex)
-		{
-			DenseEntities.resize(DenseIndex * 2);
-		}
-		DenseEntities[DenseIndex] = EntityIndex;
-		DenseIndex++;
-		return EntityIndex++;
-	}
+		template<typename Component>
+		bool EntityHasComponent(Entity e, ComponentManager<Component>* ComponentManager);
+	};
 
 	template<typename Component>
 	Component* World::AddComponent(Entity e, uint32_t ComponentID)
 	{
 		ComponentManager<Component>* Manager = GetComponentManager<Component>(ComponentID);
-		//CK_ASSERT(e < SparseEntities.size(), "Tried to access entity out of bounds!");
+		CK_CORE_ASSERT((e < SparseEntities.GetCapacity() || e == INVALID_ENTITY), "Tried to access entity out of bounds!");
 		uint32_t Index = SparseEntities[e];
-		if (Manager->ComponentPool->capacity() <= Index)
-		{
-			Manager->ComponentPool->resize(Index * 2 + 1);
-		}
-		(*Manager->ComponentPool)[Index] = *(new Component());
+		Manager->ComponentPool->Add(Manager->Size);
+		Manager->DenseEntities->Insert(e, Manager->Size);
+		Manager->Entities->Insert(Manager->Size, e);
+		Manager->Size++;
 		return &(*Manager->ComponentPool)[Index];
 	}
 
 	template<typename Component>
 	void World::RegisterComponent(uint32_t ComponentID)
 	{
-		void* Manager = new ComponentManager<Component>();
-		if (ComponentManagers.capacity() <= ComponentID)
-		{
-			ComponentManagers.reserve(ComponentID * 2);
-		}
-		ComponentManagers.insert(ComponentManagers.begin() + ComponentID, Manager);
+		ComponentManager<Component>* Manager = new ComponentManager<Component>();
+		ComponentManagers.Insert(Manager, ComponentID);
 	}
 
 	template<typename Component>
-	ComponentManager<Component>* World::GetComponentManager(uint32_t ComponentID)
+	ComponentManager<Component>* World::GetComponentManager(size_t ComponentID)
 	{
-		ComponentManager<Component>* Manager = static_cast<ComponentManager<Component>*>(ComponentManagers.at(ComponentID));
+		ComponentManager<Component>* Manager = reinterpret_cast<ComponentManager<Component>*>(ComponentManagers[ComponentID]);
 		return Manager;
+	}
+
+	template<typename Component>
+	bool World::EntityHasComponent(Entity e, ComponentManager<Component>* ComponentManager)
+	{
+		size_t i = *ComponentManager->Entities->At(e);
+		Entity t = *ComponentManager->DenseEntities->At(i);
+		return t = e;
 	}
 
 }
