@@ -2,7 +2,7 @@
 #include "Renderer.h"
 
 #include "Renderer2D.h"
-#include "Cookie/Renderer/PointLight.h"
+#include "Cookie/Renderer/Light.h"
 #include "Cookie/Asset/Mesh.h"
 #include <mathfu/glsl_mappings.h>
 #include <mathfu/matrix.h>
@@ -23,11 +23,13 @@ namespace Cookie {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(OrthographicCamera& camera, PointLight* pointLight)
+	void Renderer::BeginScene(OrthographicCamera& camera, PointLight* pointLight, DirectionalLight* directionalLight)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 		m_SceneData->PointLightPosition = pointLight->Position;
-		m_SceneData->PointLightIntensity = pointLight->Intensity;
+		m_SceneData->PointLightDiffuse = pointLight->Diffuse;
+		m_SceneData->DirectionalLightDirection = directionalLight->Direction;
+		m_SceneData->DirectionalLightDiffuse = directionalLight->Diffuse;
 	}
 
 	void Renderer::EndScene()
@@ -48,7 +50,9 @@ namespace Cookie {
 	{
 		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
 		shader->UploadUniformFloat3("u_PointLightPos", m_SceneData->PointLightPosition);
-		shader->UploadUniformFloat("u_PointLightIntensity", m_SceneData->PointLightIntensity);
+		shader->UploadUniformFloat3("u_PointLightDiffuse", m_SceneData->PointLightDiffuse);
+		shader->UploadUniformFloat3("u_DirectionalLightDirection", m_SceneData->DirectionalLightDirection);
+		shader->UploadUniformFloat3("u_DirectionalLightDiffuse", m_SceneData->DirectionalLightDiffuse);
 	}
 
 	void Renderer::DrawModel(const struct Model* model, class Material* material, const mathfu::mat4* transform)

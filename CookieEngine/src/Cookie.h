@@ -22,7 +22,7 @@
 #include "Cookie/Renderer/Material.h"
 #include "Cookie/Renderer/Texture.h"
 #include "Cookie/Renderer/OrthographicCamera.h"
-#include "Cookie/Renderer/PointLight.h"
+#include "Cookie/Renderer/Light.h"
 
 #include "Cookie/Core/Time.h"
 

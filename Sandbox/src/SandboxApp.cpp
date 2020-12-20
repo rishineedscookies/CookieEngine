@@ -20,7 +20,7 @@ class ExampleLayer : public Cookie::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(mathfu::quat::identity)
+		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f, 0.0f, 10.0f), m_CameraRotation(mathfu::quat::identity)
 	{
 		m_ShaderManager.Load("assets/shaders/Texture.glsl");
 		m_ShaderManager.Load("assets/shaders/FlatColor.glsl");
@@ -33,8 +33,8 @@ public:
 
 		m_GreenMaterial = Cookie::CreateRef<GreenMat>("GreenMat", "Mesh");
 		m_GreenMaterial->SetShader(m_ShaderManager.Get("Mesh"));
-		m_RedMaterial = Cookie::CreateRef<RedMat>("RedMat", "FlatColor");
-		m_RedMaterial->SetShader(m_ShaderManager.Get("FlatColor"));
+		m_RedMaterial = Cookie::CreateRef<RedMat>("RedMat", "Mesh");
+		m_RedMaterial->SetShader(m_ShaderManager.Get("Mesh"));
 		m_MaterialManager.Add(m_GreenMaterial, "GreenMat");
 		m_MaterialManager.Add(m_RedMaterial, "RedMat");
 
@@ -52,33 +52,43 @@ public:
 		m_PhysicsSystem = new PhysicsSystem();
 		m_MovementSystem = new MovementSystem();
 
-		Cookie::Entity Cube = m_World->AddEntity();
-		m_World->AddComponent<TransformComponent>(Cube, TRANSFORM_ID);
-		MeshRenderComponent* cubeModel = m_World->AddComponent<MeshRenderComponent>(Cube, MESH_RENDER_ID);
-		cubeModel->Model = m_Monkey;
-		cubeModel->Material = &*m_GreenMaterial;
+		{
+			Cookie::Entity Cube = m_World->AddEntity();
+			m_World->AddComponent<TransformComponent>(Cube, TRANSFORM_ID);
+			MeshRenderComponent* cubeModel = m_World->AddComponent<MeshRenderComponent>(Cube, MESH_RENDER_ID);
+			cubeModel->Model = m_Monkey;
+			cubeModel->Material = &*m_GreenMaterial;
+		}
 
-		m_Player = m_World->AddEntity();
-		m_World->AddComponent<MovementComponent>(m_Player, MOVEMENT_ID);
-		TransformComponent* PlayerTransform = m_World->AddComponent<TransformComponent>(m_Player, TRANSFORM_ID);
-		PlayerTransform->Transform = mathfu::mat4::Transform(mathfu::vec3(0.0f, 1.5f, 0.0f),
-			mathfu::mat3::Identity(),
-			mathfu::vec3(1.0f));
-		Cookie::ComponentManager<TransformComponent>* TransformManager = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
-		TransformComponent* TestComp = &(*TransformManager->ComponentPool)[0];
-		AABBColliderComponent* PlayerCollider = m_World->AddComponent<AABBColliderComponent>(m_Player, AABB_COLLIDER_ID);
-		PlayerCollider->Offset = mathfu::vec3(0.0f);
-		PlayerCollider->HalfExtents = mathfu::vec3(0.5f);
+		{
+			m_Player = m_World->AddEntity();
+			MeshRenderComponent* mesh = m_World->AddComponent<MeshRenderComponent>(m_Player, MESH_RENDER_ID);
+			mesh->Model = m_CubeModel;
+			mesh->Material = &*m_RedMaterial;
+			m_World->AddComponent<MovementComponent>(m_Player, MOVEMENT_ID);
+			TransformComponent* PlayerTransform = m_World->AddComponent<TransformComponent>(m_Player, TRANSFORM_ID);
+			PlayerTransform->Transform = mathfu::mat4::Transform(mathfu::vec3(0.0f, 1.5f, 0.0f),
+				mathfu::mat3::Identity(),
+				mathfu::vec3(1.0f));
+			Cookie::ComponentManager<TransformComponent>* TransformManager = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
+			TransformComponent* TestComp = &(*TransformManager->ComponentPool)[0];
+			AABBColliderComponent* PlayerCollider = m_World->AddComponent<AABBColliderComponent>(m_Player, AABB_COLLIDER_ID);
+			PlayerCollider->Offset = mathfu::vec3(0.0f);
+			PlayerCollider->HalfExtents = mathfu::vec3(1.0f);
+		}
 
 		for (uint32_t floor = 0; floor < 20; floor++)
 		{
 			m_Floor = m_World->AddEntity();
+			MeshRenderComponent* mesh = m_World->AddComponent<MeshRenderComponent>(m_Floor, MESH_RENDER_ID);
+			mesh->Model = m_CubeModel;
+			mesh->Material = &*m_GreenMaterial;
 			m_World->AddComponent<TransformComponent>(m_Floor, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(floor, 0, 0),
 			mathfu::mat3::Identity(),
 			mathfu::vec3(1.0f));
 			AABBColliderComponent* FloorCollider = m_World->AddComponent<AABBColliderComponent>(m_Floor, AABB_COLLIDER_ID);
 			FloorCollider->Offset = mathfu::vec3(0.0f);
-			FloorCollider->HalfExtents = mathfu::vec3(0.5f);
+			FloorCollider->HalfExtents = mathfu::vec3(1.0f);
 		}
 		
 	}
@@ -141,8 +151,9 @@ public:
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
-		Cookie::PointLight light = Cookie::PointLight(mathfu::vec3(2.0f), 5.0f);
-		Cookie::Renderer::BeginScene(m_Camera, &light);
+		Cookie::PointLight light = Cookie::PointLight(mathfu::vec3(3.0f), mathfu::vec3(5.0f, 5.0f, 5.0f));
+		Cookie::DirectionalLight dirLight = Cookie::DirectionalLight(mathfu::vec3(0.2f, -1.0f, -0.3f), mathfu::vec3(2.5f, 2.5f, 0.1f));
+		Cookie::Renderer::BeginScene(m_Camera, &light, &dirLight);
 		Cookie::Renderer2D::BeginScene(m_Camera);
 
 		RenderOnUpdate(time);
