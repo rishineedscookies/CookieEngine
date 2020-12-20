@@ -34,6 +34,7 @@ namespace Cookie {
 
 	void Application::Run()
 	{
+		m_Time.CurrentTime = (float) glfwGetTime();
 		while (m_Running)
 		{
 

@@ -8,7 +8,7 @@
 
 namespace Cookie{
 
-	Ref<VertexArray> VertexArray::Create()
+	VertexArray* VertexArray::Create()
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -16,7 +16,7 @@ namespace Cookie{
 			CK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return CreateRef<OpenGLVertexArray>();
+			return new OpenGLVertexArray();
 		default:
 			return nullptr;
 		}

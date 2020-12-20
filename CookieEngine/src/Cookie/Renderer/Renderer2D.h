@@ -18,12 +18,16 @@ namespace Cookie {
 
 	struct MaterialData
 	{
+		~MaterialData()
+		{
+			delete[] QuadVertexBufferBase;
+		}
 		static const uint32_t MaxQuads = 20000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		uint32_t QuadIndexCount = 0;
-		Ref<VertexArray> QuadVertexArray;
-		Ref<VertexBuffer> QuadVertexBuffer;
+		VertexArray* QuadVertexArray;
+		VertexBuffer* QuadVertexBuffer;
 		Ref<Material> QuadMaterial;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
@@ -36,8 +40,8 @@ namespace Cookie {
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
 
-		Ref<VertexArray> QuadVertexArray;
-		Ref<VertexBuffer> QuadVertexBuffer;
+		VertexArray* QuadVertexArray;
+		VertexBuffer* QuadVertexBuffer;
 		Ref<Shader> QuadShader;
 		Ref<Shader> TextureShader;
 

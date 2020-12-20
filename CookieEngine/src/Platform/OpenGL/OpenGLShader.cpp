@@ -170,7 +170,7 @@ namespace Cookie {
 		// Now time to link them together into a program.
 		// Get a program object.
 		GLuint program = glCreateProgram();
-		std::array<GLenum, 4> glShaderIds;
+		std::array<GLenum, 2> glShaderIds;
 		int idIndex = 0;
 		for (auto& kv : sources)
 		{
@@ -241,7 +241,10 @@ namespace Cookie {
 		// Always detach shaders after a successful link.
 
 		for (auto id : glShaderIds)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
 	}
 
 }

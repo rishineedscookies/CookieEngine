@@ -24,7 +24,8 @@ namespace Cookie {
 
 	void OrthographicCamera::SetProjectionMatrix(float left, float right, float bottom, float top)
 	{
-		m_ProjectionMatrix = (mathfu::mat4::Ortho(left, right, bottom, top, -1.0f, 1.0f));
+		m_ProjectionMatrix = mathfu::mat4::Ortho(left, right, bottom, top, -0.01f, 100.0f);
+		//m_ProjectionMatrix = mathfu::mat4::Perspective(60.0f, left / bottom, -0.01f, 100.0f);
 	}
 
 	void OrthographicCamera::CalculateViewMatrix()

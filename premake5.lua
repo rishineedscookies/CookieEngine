@@ -19,11 +19,12 @@ IncludeDir["ImGui"] = "CookieEngine/vendor/imgui"
 IncludeDir["MathFu"] = "CookieEngine/vendor/MathFu/include"
 IncludeDir["Vectorial"] = "CookieEngine/vendor/vectorial/include"
 IncludeDir["stb_image"] = "CookieEngine/vendor/stb_image"
+IncludeDir["assimp"] = "CookieEngine/vendor/assimp-master/include"
 
 include "CookieEngine/vendor/GLFW"
 include "CookieEngine/vendor/Glad"
 include "CookieEngine/vendor/imgui"
-
+include "CookieEngine/vendor/assimp-master"
 
 project "CookieEngine"
     location "CookieEngine"
@@ -63,7 +64,8 @@ project "CookieEngine"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.MathFu}",
         "%{IncludeDir.Vectorial}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.assimp}"
     }
 
     links
@@ -71,7 +73,8 @@ project "CookieEngine"
         "GLFW",
         "Glad",
         "ImGui",
-        "opengl32.lib"
+        "opengl32.lib",
+        "assimp"
     }
 
     filter "system:windows"

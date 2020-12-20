@@ -16,9 +16,11 @@ namespace Cookie
 		~Vector();
 
 		// Access
-		T& operator[](size_t i);
+		T& operator[](size_t i) const;
 
-		T* At(size_t i);
+		T* At(size_t i) const;
+
+		bool TryAccess(size_t i, T* out);
 
 		T* GetData();
 
@@ -43,6 +45,16 @@ namespace Cookie
 	};
 
 	template<typename T>
+	bool Vector<T>::TryAccess(size_t i, T* out)
+	{
+		if (i < Capacity && i >= 0)
+			return false;
+
+		out = Arr + i;
+		return true;
+	}
+
+	template<typename T>
 	void Vector<T>::Add(size_t i)
 	{
 		if (Capacity >= i)
@@ -55,7 +67,7 @@ namespace Cookie
 	template<typename T>
 	void Vector<T>::Insert(T t, size_t i)
 	{
-		if (Capacity >= i)
+		if (Capacity <= i)
 		{
 			Reserve(2 * i + 1);
 		}
@@ -79,13 +91,13 @@ namespace Cookie
 	}
 
 	template<typename T>
-	T& Vector<T>::operator[](size_t i)
+	T& Vector<T>::operator[](size_t i) const
 	{
 		return Arr[i];
 	}
 
 	template<typename T>
-	T* Vector<T>::At(size_t i)
+	T* Vector<T>::At(size_t i) const
 	{
 		CK_CORE_ASSERT(i < Capacity && i >= 0, "Trying to access element out of range");
 		return Arr + i;

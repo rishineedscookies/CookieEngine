@@ -7,7 +7,7 @@
 #include "Cookie/Core/Log.h"
 
 #define GET_POOL(World, ComponentType, ID) World->GetComponentManager<ComponentType>(ID)
-#define GET_COMPONENT(ComponentManager, idx) &(*ComponentManager->ComponentPool)[*ComponentManager->Entities->At(idx)]
+#define GET_COMPONENT(ComponentManager, idx) ComponentManager->GetComponent(idx) 
 
 namespace Cookie {
 
@@ -44,8 +44,7 @@ namespace Cookie {
 		Manager->ComponentPool->Add(Manager->Size);
 		Manager->DenseEntities->Insert(e, Manager->Size);
 		Manager->Entities->Insert(Manager->Size, e);
-		Manager->Size++;
-		return &(*Manager->ComponentPool)[Index];
+		return &(*Manager->ComponentPool)[Manager->Size++];
 	}
 
 	template<typename Component>
@@ -65,9 +64,12 @@ namespace Cookie {
 	template<typename Component>
 	bool World::EntityHasComponent(Entity e, ComponentManager<Component>* ComponentManager)
 	{
+		if (ComponentManager->Entities->GetCapacity() < e || e < 0 || e == INVALID_ENTITY)
+			return false;
+
 		size_t i = *ComponentManager->Entities->At(e);
 		Entity t = *ComponentManager->DenseEntities->At(i);
-		return t = e;
+		return t == e;
 	}
 
 }

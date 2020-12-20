@@ -22,7 +22,7 @@ void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 		TransformComponent* Transform = GET_COMPONENT(Transforms, idx);
 		AABBColliderComponent* Collider = GET_COMPONENT(Colliders, idx);
 
-		Movement->Velocity = mathfu::vec3(0.0f);
+		Movement->Velocity.x = 0.0f;
 		if (Cookie::Input::GetKeyDown(CK_KEY_LEFT))
 		{
 			Movement->Velocity.x = -1.0f;
@@ -39,18 +39,29 @@ void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 		{
 			Movement->Velocity.y = -1.0f;
 		}
-		
-		mathfu::mat4 OldTransform = Transform->Transform;
-		Transform->Transform *= mathfu::mat4::FromTranslationVector(Movement->Velocity * Time->DeltaTime);
-		HitResult Hit;
-		if (PhysicsSystem::CheckIntersection(World, idx, Hit))
+		if (Cookie::Input::GetKeyDown(CK_KEY_SPACE))
 		{
-			mathfu::vec3 VelInNorm = -mathfu::vec3::DotProduct(Movement->Velocity, Hit.Normal) * Hit.Normal;
-			CK_INFO("Penetration: {0}", Hit.Penetration);
-			Movement->Velocity += VelInNorm;
-			Movement->Velocity += Hit.Penetration * Hit.Normal;
-			
-			Transform->Transform = OldTransform * mathfu::mat4::FromTranslationVector(Movement->Velocity * Time->DeltaTime);
+			Movement->Velocity.y = 2.5f;
+		}
+
+		Movement->Velocity.y -= 2.0f * Time->DeltaTime;
+		
+		constexpr uint32_t iterations = 6;
+		for (uint32_t itr = 0; itr < 6; itr++)
+		{
+			float ItrTime = Time->DeltaTime / iterations;
+			mathfu::mat4 OldTransform = Transform->Transform;
+			Transform->Transform *= mathfu::mat4::FromTranslationVector(Movement->Velocity * Time->DeltaTime);
+			HitResult Hit;
+			if (PhysicsSystem::CheckIntersection(World, idx, Hit))
+			{
+				mathfu::vec3 VelInNorm = -mathfu::vec3::DotProduct(Movement->Velocity, Hit.Normal) * Hit.Normal;
+				CK_INFO("Penetration: {0}", Hit.Penetration);
+				Movement->Velocity += VelInNorm;
+				Movement->Velocity += Hit.Penetration * Hit.Normal;
+				
+				Transform->Transform = OldTransform * mathfu::mat4::FromTranslationVector(Movement->Velocity * Time->DeltaTime);
+			}
 		}
 	}
 }

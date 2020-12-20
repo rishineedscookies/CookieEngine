@@ -40,7 +40,7 @@ namespace Cookie {
 			offset += 4;
 		}
 
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data->MaxIndices);
+		IndexBuffer* quadIB = IndexBuffer::Create(quadIndices, s_Data->MaxIndices);
 		s_Data->QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
@@ -68,13 +68,18 @@ namespace Cookie {
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		s_Data->QuadShader->Bind();
+		//s_Data->QuadShader->Bind();
 		s_Data->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-		s_Data->QuadShader->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		//s_Data->QuadShader->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
 		s_Data->QuadIndexCount = 0;
 		s_Data->QuadVertexBufferPtr = s_Data->QuadVertexBufferBase;
 		s_Data->TextureSlotIndex = 0;
+		for (uint32_t i = 0; i < s_Data->MaterialDataList.size(); i++)
+		{
+			s_Data->MaterialDataList[i]->QuadVertexBufferPtr = s_Data->MaterialDataList[i]->QuadVertexBufferBase;
+		}
+
 	}
 
 	void Renderer2D::EndScene()
@@ -86,9 +91,7 @@ namespace Cookie {
 		for (uint32_t i = 0; i < s_Data->MaterialDataList.size(); i++)
 		{
 			FlushMaterial(s_Data->MaterialDataList[i]);
-			delete s_Data->MaterialDataList[i];
 		}
-		s_Data->MaterialDataList.clear();
 	}
 
 	void Renderer2D::Flush()
@@ -164,11 +167,11 @@ namespace Cookie {
 		data->QuadVertexBuffer = VertexBuffer::Create(nullptr, data->MaxVertices * sizeof(QuadVertex));
 		data->QuadVertexBuffer->SetLayout(
 			{
-				{ ShaderDataType::Float3, "a_Position" }/*,
-				{ ShaderDataType::Float4, "a_Color" },
-				{ ShaderDataType::Float2, "a_TexCoord" },
-				{ ShaderDataType::Float, "a_TexIndex" },
-				{ ShaderDataType::Float, "a_TilingFactor" },*/
+				{ ShaderDataType::Float3, "a_Position" }
+				//{ ShaderDataType::Float4, "a_Color" },
+				//{ ShaderDataType::Float2, "a_TexCoord" },
+				//{ ShaderDataType::Float, "a_TexIndex" },
+			//	{ ShaderDataType::Float, "a_TilingFactor" },
 			});
 
 		data->QuadVertexArray->AddVertexBuffer(data->QuadVertexBuffer);
@@ -190,7 +193,7 @@ namespace Cookie {
 			offset += 4;
 		}
 
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, data->MaxIndices);
+		IndexBuffer* quadIB = IndexBuffer::Create(quadIndices, data->MaxIndices);
 		data->QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 		return data;
@@ -263,14 +266,15 @@ namespace Cookie {
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
 			data->QuadVertexBufferPtr->Position = (transform * s_Data->QuadVertexPositions[i]).xyz();
-			/*data->QuadVertexBufferPtr->Color = mathfu::vec4(1);
-			data->QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			data->QuadVertexBufferPtr->TexIndex = 0;
-			data->QuadVertexBufferPtr->TilingFactor = 1.0f;*/
+			//data->QuadVertexBufferPtr->Color = mathfu::vec4(1);
+			//data->QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			//data->QuadVertexBufferPtr->TexIndex = 0;
+			//data->QuadVertexBufferPtr->TilingFactor = 1.0f;
 			data->QuadVertexBufferPtr++;
 		}
 
 		data->QuadIndexCount += 6;
+		
 	}
 
 	void Renderer2D::DrawQuad(const mathfu::vec3& position, const mathfu::quat& rotation, const mathfu::vec2& size, const Ref<Material> material)

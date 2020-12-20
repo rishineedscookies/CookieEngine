@@ -14,3 +14,6 @@
 [submodule "CookieEngine/vendor/vectorial"]
 	path = CookieEngine/vendor/vectorial
 	url = https://github.com/scoopr/vectorial
+[submodule "CookieEngine/vendor/assimp-master"]
+	path = CookieEngine/vendor/assimp-master
+	url = https://github.com/rishineedscookies/assimp

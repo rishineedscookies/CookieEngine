@@ -32,7 +32,7 @@ namespace Cookie {
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(const VertexBuffer* vertexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
@@ -51,14 +51,14 @@ namespace Cookie {
 				(const void*)element.Offset);
 			i++;
 		}
-		m_VertexBuffers.push_back(vertexBuffer);
+		m_VertexBuffers.push_back(const_cast<VertexBuffer*>(vertexBuffer));
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(const IndexBuffer* indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
-		m_IndexBuffer = indexBuffer;
+		m_IndexBuffer = const_cast<IndexBuffer*>(indexBuffer);
 	}
 
 	void OpenGLVertexArray::Bind() const

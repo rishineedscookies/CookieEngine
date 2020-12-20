@@ -22,8 +22,12 @@
 #include "Cookie/Renderer/Material.h"
 #include "Cookie/Renderer/Texture.h"
 #include "Cookie/Renderer/OrthographicCamera.h"
+#include "Cookie/Renderer/PointLight.h"
 
 #include "Cookie/Core/Time.h"
+
+#include "Cookie/Asset/Mesh.h"
+#include "Cookie/Asset/MeshLoader.h"
 
 #include "Cookie/Scene/Entity.h"
 #include "Cookie/Scene/ComponentManager.h"

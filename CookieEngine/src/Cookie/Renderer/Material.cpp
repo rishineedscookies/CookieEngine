@@ -16,7 +16,7 @@ namespace Cookie {
 		m_Materials[name] = material;
 	}
 
-	Cookie::Ref<Cookie::Material> MaterialManager::Get(const std::string& name)
+	Ref<Material> MaterialManager::Get(const std::string& name)
 	{
 		CK_CORE_ASSERT(Exists(name), "Material not found!");
 		return m_Materials[name];

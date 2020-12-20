@@ -12,6 +12,7 @@
 #include "AABBColliderComponent.h"
 #include "MovementComponent.h"
 #include "TransformComponent.h"
+#include "MeshRenderComponent.h"
 #include "PhysicsSystem.h"
 #include "MovementSystem.h"
 
@@ -21,6 +22,24 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(mathfu::quat::identity)
 	{
+		m_ShaderManager.Load("assets/shaders/Texture.glsl");
+		m_ShaderManager.Load("assets/shaders/FlatColor.glsl");
+		m_ShaderManager.Load("assets/shaders/SimpleDiffuse.glsl", "Mesh");
+		m_TextureShader = Cookie::Shader::Create("assets/shaders/Texture.glsl");
+
+		m_Texture = Cookie::Texture2D::Create("assets/textures/HealthCross.png");
+		m_TextureShader->Bind();
+		m_TextureShader->UploadUniformInt("u_Texture", 0);
+
+		m_GreenMaterial = Cookie::CreateRef<GreenMat>("GreenMat", "Mesh");
+		m_GreenMaterial->SetShader(m_ShaderManager.Get("Mesh"));
+		m_RedMaterial = Cookie::CreateRef<RedMat>("RedMat", "FlatColor");
+		m_RedMaterial->SetShader(m_ShaderManager.Get("FlatColor"));
+		m_MaterialManager.Add(m_GreenMaterial, "GreenMat");
+		m_MaterialManager.Add(m_RedMaterial, "RedMat");
+
+		m_CubeModel = m_ModelManager.LoadModel("assets/models/objcube.obj");
+		m_Monkey = m_ModelManager.LoadModel("assets/models/monkey.obj");
 
 		m_World = new Cookie::World();
 
@@ -28,9 +47,16 @@ public:
 		m_World->RegisterComponent<AABBColliderComponent>(AABB_COLLIDER_ID);
 		m_World->RegisterComponent<MovementComponent>(MOVEMENT_ID);
 		m_World->RegisterComponent<TransformComponent>(TRANSFORM_ID);
+		m_World->RegisterComponent<MeshRenderComponent>(MESH_RENDER_ID);
 
 		m_PhysicsSystem = new PhysicsSystem();
 		m_MovementSystem = new MovementSystem();
+
+		Cookie::Entity Cube = m_World->AddEntity();
+		m_World->AddComponent<TransformComponent>(Cube, TRANSFORM_ID);
+		MeshRenderComponent* cubeModel = m_World->AddComponent<MeshRenderComponent>(Cube, MESH_RENDER_ID);
+		cubeModel->Model = m_Monkey;
+		cubeModel->Material = &*m_GreenMaterial;
 
 		m_Player = m_World->AddEntity();
 		m_World->AddComponent<MovementComponent>(m_Player, MOVEMENT_ID);
@@ -44,29 +70,17 @@ public:
 		PlayerCollider->Offset = mathfu::vec3(0.0f);
 		PlayerCollider->HalfExtents = mathfu::vec3(0.5f);
 
-		m_Floor = m_World->AddEntity();
-		m_World->AddComponent<TransformComponent>(m_Floor, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(0.0f),
-		mathfu::mat3::Identity(),
-		mathfu::vec3(1.0f));
-		AABBColliderComponent* FloorCollider = m_World->AddComponent<AABBColliderComponent>(m_Floor, AABB_COLLIDER_ID);
-		FloorCollider->Offset = mathfu::vec3(0.0f);
-		FloorCollider->HalfExtents = mathfu::vec3(0.5f);
+		for (uint32_t floor = 0; floor < 20; floor++)
+		{
+			m_Floor = m_World->AddEntity();
+			m_World->AddComponent<TransformComponent>(m_Floor, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(floor, 0, 0),
+			mathfu::mat3::Identity(),
+			mathfu::vec3(1.0f));
+			AABBColliderComponent* FloorCollider = m_World->AddComponent<AABBColliderComponent>(m_Floor, AABB_COLLIDER_ID);
+			FloorCollider->Offset = mathfu::vec3(0.0f);
+			FloorCollider->HalfExtents = mathfu::vec3(0.5f);
+		}
 		
-		
-		m_ShaderManager.Load("assets/shaders/Texture.glsl");
-		m_ShaderManager.Load("assets/shaders/FlatColor.glsl");
-		m_TextureShader = Cookie::Shader::Create("assets/shaders/Texture.glsl");
-
-		m_Texture = Cookie::Texture2D::Create("assets/textures/HealthCross.png");
-		m_TextureShader->Bind();
-		m_TextureShader->UploadUniformInt("u_Texture", 0);
-
-		m_GreenMaterial = Cookie::CreateRef<GreenMat>("GreenMat", "FlatColor");
-		m_GreenMaterial->SetShader(m_ShaderManager.Get("FlatColor"));
-		m_RedMaterial = Cookie::CreateRef<RedMat>("RedMat", "FlatColor");
-		m_RedMaterial->SetShader(m_ShaderManager.Get("FlatColor"));
-		m_MaterialManager.Add(m_GreenMaterial, "GreenMat");
-		m_MaterialManager.Add(m_RedMaterial, "RedMat");
 	}
 
 	void OnUpdate(Cookie::Time time) override
@@ -127,7 +141,8 @@ public:
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
-		Cookie::Renderer::BeginScene(m_Camera);
+		Cookie::PointLight light = Cookie::PointLight(mathfu::vec3(2.0f), 5.0f);
+		Cookie::Renderer::BeginScene(m_Camera, &light);
 		Cookie::Renderer2D::BeginScene(m_Camera);
 
 		RenderOnUpdate(time);
@@ -164,13 +179,19 @@ public:
 	void RenderOnUpdate(Cookie::Time Time)
 	{
 		Cookie::ComponentManager<TransformComponent>* Transforms = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
-		for (Cookie::size_t i = 0; i < Transforms->Size; i++)
+		Cookie::ComponentManager<MeshRenderComponent>* Meshes = GET_POOL(m_World, MeshRenderComponent, MESH_RENDER_ID);
+		for (Cookie::size_t i = 0; i < Meshes->Size; i++)
 		{
-			Cookie::Entity e = (*Transforms->DenseEntities)[i];
-			if(!e)
+			Cookie::Entity e = (*Meshes->DenseEntities)[i];
+
+			if (e == INVALID_ENTITY)
 				continue;
+
+			MeshRenderComponent* MeshRender = GET_COMPONENT(Meshes, e);
 			TransformComponent* Transform = GET_COMPONENT(Transforms, e);
-			Cookie::Renderer2D::DrawQuad(Transform->Transform, m_GreenMaterial);
+
+			Cookie::Renderer::DrawModel(MeshRender->Model, MeshRender->Material, &Transform->Transform);
+			//Cookie::Renderer2D::DrawQuad(Transform->Transform, m_GreenMaterial);
 		}
 	}
 
@@ -187,6 +208,10 @@ private:
 	Cookie::MaterialManager m_MaterialManager;
 	Cookie::Ref<Cookie::Material> m_GreenMaterial;
 	Cookie::Ref<Cookie::Material> m_RedMaterial;
+
+	Cookie::ModelManager m_ModelManager;
+	Cookie::Model* m_CubeModel;
+	Cookie::Model* m_Monkey;
 
 	Cookie::OrthographicCamera m_Camera;
 	mathfu::vec3 m_CameraPosition;

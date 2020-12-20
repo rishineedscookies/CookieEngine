@@ -50,11 +50,10 @@ bool PhysicsSystem::CheckIntersection(Cookie::World* World, Cookie::Entity A, Co
 {
 	const Cookie::ComponentManager<AABBColliderComponent>* AABBColliders = GET_POOL(World, AABBColliderComponent, AABB_COLLIDER_ID);
 	const Cookie::ComponentManager<TransformComponent>* Transforms = GET_POOL(World, TransformComponent, TRANSFORM_ID);
-	const TransformComponent* ATrans = GET_COMPONENT(Transforms, A);
-	const TransformComponent* BTrans = GET_COMPONENT(Transforms, B);
-	const AABBColliderComponent* ACollider = GET_COMPONENT(AABBColliders, A);
-	const AABBColliderComponent* BCollider = GET_COMPONENT(AABBColliders, B);
-
+	const TransformComponent* ATrans = Transforms->GetComponent(A);//GET_COMPONENT(Transforms, A);
+	const TransformComponent* BTrans = Transforms->GetComponent(B);
+	const AABBColliderComponent* ACollider = AABBColliders->GetComponent(A);
+	const AABBColliderComponent* BCollider = AABBColliders->GetComponent(B);
 	return CheckIntersection(ACollider, ATrans, BCollider, BTrans, OutHitResult);
 }
 
