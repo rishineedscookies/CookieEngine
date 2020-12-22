@@ -49,15 +49,12 @@ void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 		mathfu::vec3 right = mathfu::mat4::ToRotationMatrix(Transform->Transform) * mathfu::vec3(1.0f, 0.0f, 0.0f);
 		if (input.LengthSquared() != 0.0f) {
 		}
-		CK_TRACE("Player Forward: {0}, {1}, {2}", forward.x, forward.y, forward.z);
 		mathfu::vec3 Acceleration = forward * -input.y +
 			right * input.x;
-		//Movement->Velocity = 3.0f * Acceleration;
 		CK_TRACE("Velocity: {0}, {1}, {2}", Movement->Velocity.x, Movement->Velocity.y, Movement->Velocity.z);
 		Movement->Velocity.x = Acceleration.x; //* Time->DeltaTime;
 		Movement->Velocity.y -= 2.0f * Time->DeltaTime;
 		Movement->Velocity.z = Acceleration.z; //* Time->DeltaTime;
-		//Transform->Transform = mathfu::mat4::FromTranslationVector(Movement->Velocity * Time->DeltaTime) * Transform->Transform;
 
 		constexpr uint32_t iterations = 6;
 		for (uint32_t itr = 0; itr < 6; itr++)
