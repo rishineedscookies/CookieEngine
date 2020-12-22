@@ -1,16 +1,17 @@
 #pragma once
 
-#include "Cookie/Core/Core.h"
+#include <mathfu/vector.h>
+#include <mathfu/glsl_mappings.h>
 
 namespace Cookie {
 
-	class COOKIE_API Input
+	class Input
 	{
 	public:
 		static bool GetKeyDown(int keycode);
 
 		static bool GetMouseButtonDown(int button);
-		static std::pair<float, float> GetMousePos();
+		static mathfu::vec2 GetMousePos();
 		static float GetMouseX();
 		static float GetMouseY();
 	};

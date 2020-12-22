@@ -20,7 +20,7 @@ namespace Cookie {
 		return buttonState == GLFW_PRESS;
 	}
 
-	std::pair<float, float> Input::GetMousePos()
+	mathfu::vec2 Input::GetMousePos()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double x;
@@ -32,14 +32,14 @@ namespace Cookie {
 
 	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePos();
-		return x;
+		auto pos = GetMousePos();
+		return pos.x;
 	}
 
 	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePos();
-		return y;
+		auto pos = GetMousePos();
+		return pos.y;
 	}
 
 }

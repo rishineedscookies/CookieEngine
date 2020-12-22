@@ -32,6 +32,7 @@ namespace Cookie {
 	private:
 		struct SceneData {
 			mathfu::mat4 ViewProjectionMatrix;
+			mathfu::vec3 ViewPosition;
 			mathfu::vec3 PointLightPosition;
 			mathfu::vec3 PointLightDiffuse;
 			mathfu::vec3 DirectionalLightDirection;

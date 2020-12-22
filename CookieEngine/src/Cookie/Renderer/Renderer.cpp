@@ -26,6 +26,7 @@ namespace Cookie {
 	void Renderer::BeginScene(OrthographicCamera& camera, PointLight* pointLight, DirectionalLight* directionalLight)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		m_SceneData->ViewPosition = camera.GetPosition();
 		m_SceneData->PointLightPosition = pointLight->Position;
 		m_SceneData->PointLightDiffuse = pointLight->Diffuse;
 		m_SceneData->DirectionalLightDirection = directionalLight->Direction;
@@ -49,6 +50,7 @@ namespace Cookie {
 	void Renderer::UploadSceneUniforms(Shader* shader)
 	{
 		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		shader->UploadUniformFloat3("u_ViewPos", m_SceneData->ViewPosition);
 		shader->UploadUniformFloat3("u_PointLightPos", m_SceneData->PointLightPosition);
 		shader->UploadUniformFloat3("u_PointLightDiffuse", m_SceneData->PointLightDiffuse);
 		shader->UploadUniformFloat3("u_DirectionalLightDirection", m_SceneData->DirectionalLightDirection);
