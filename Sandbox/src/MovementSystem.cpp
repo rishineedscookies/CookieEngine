@@ -8,6 +8,7 @@
 
 void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 {
+	PROFILE_SCOPE("Movement Update");
 	Cookie::ComponentManager<TransformComponent>* Transforms = GET_POOL(World, TransformComponent, TRANSFORM_ID);
 	Cookie::ComponentManager<MovementComponent>* Movements = GET_POOL(World, MovementComponent, MOVEMENT_ID);
 	Cookie::ComponentManager<AABBColliderComponent>* Colliders = GET_POOL(World, AABBColliderComponent, AABB_COLLIDER_ID);
@@ -25,19 +26,19 @@ void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 		Movement->Velocity.x = 0.0f;
 		Movement->Velocity.z = 0.0f;
 		mathfu::vec2 input(0.0f);
-		if (Cookie::Input::GetKeyDown(CK_KEY_LEFT))
+		if (Cookie::Input::GetKeyDown(CK_KEY_A))
 		{
 			input.x = -1.0f;
 		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_UP))
+		if (Cookie::Input::GetKeyDown(CK_KEY_W))
 		{
 			input.y = 1.0f;
 		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_RIGHT))
+		if (Cookie::Input::GetKeyDown(CK_KEY_D))
 		{
 			input.x = 1.0f;
 		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_DOWN))
+		if (Cookie::Input::GetKeyDown(CK_KEY_S))
 		{
 			input.y = -1.0f;
 		}
@@ -47,11 +48,8 @@ void MovementSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 		}
 		mathfu::vec3 forward = mathfu::mat4::ToRotationMatrix(Transform->Transform) * mathfu::vec3(0.0f, 0.0f, 1.0f);
 		mathfu::vec3 right = mathfu::mat4::ToRotationMatrix(Transform->Transform) * mathfu::vec3(1.0f, 0.0f, 0.0f);
-		if (input.LengthSquared() != 0.0f) {
-		}
 		mathfu::vec3 Acceleration = forward * -input.y +
 			right * input.x;
-		CK_TRACE("Velocity: {0}, {1}, {2}", Movement->Velocity.x, Movement->Velocity.y, Movement->Velocity.z);
 		Movement->Velocity.x = Acceleration.x; //* Time->DeltaTime;
 		Movement->Velocity.y -= 2.0f * Time->DeltaTime;
 		Movement->Velocity.z = Acceleration.z; //* Time->DeltaTime;

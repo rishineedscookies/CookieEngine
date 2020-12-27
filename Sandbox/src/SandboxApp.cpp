@@ -88,9 +88,9 @@ public:
 		}
 
 
-		for (uint32_t floorX = 0; floorX < 10; floorX++)
+		for (uint32_t floorX = 0; floorX < 20; floorX++)
 		{
-			for (uint32_t floorY = 0; floorY < 10; floorY++)
+			for (uint32_t floorY = 0; floorY < 20; floorY++)
 			{
 				m_Floor = m_World->AddEntity();
 				MeshRenderComponent* mesh = m_World->AddComponent<MeshRenderComponent>(m_Floor, MESH_RENDER_ID);
@@ -108,6 +108,8 @@ public:
 
 	void OnUpdate(Cookie::Time time) override
 	{
+		PROFILE_SCOPE("SandboxApp::OnUpdate");
+
 		InputSystem::OnUpdate(m_World, &time);
 		CK_TRACE("Mouse Delta: {0}, {1}", InputSystem::DeltaMouseX, InputSystem::DeltaMouseY);
 		if (Cookie::Input::GetKeyDown(CK_KEY_Q))
@@ -161,7 +163,7 @@ public:
 		}
 		m_FirstPersonCameraSystem->OnUpdate(m_World, &time);
 		m_MovementSystem->OnUpdate(m_World, &time);
-		m_PhysicsSystem->OnUpdate(m_World, &time);
+		//m_PhysicsSystem->OnUpdate(m_World, &time);
 
 		Cookie::RenderCommand::Clear(mathfu::vec4(0.6f, 0.14f, 0.29f, 1.0f));
 
@@ -200,11 +202,22 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
+		ImGui::Text("Profiler");
+		for (uint32_t i = 0; i < Cookie::Profiler::m_Count; i++)
+		{
+			Cookie::ProfileResult* result = &Cookie::Profiler::m_Results[i];
+			char label[50];
+			strcpy(label, result->Name);
+			strcat(label, " %.6fms");
+			ImGui::Text(label, result->Duration);
+		}
+		Cookie::Profiler::m_Count = 0;
 		ImGui::End();
 	}
 
 	void RenderOnUpdate(Cookie::Time Time)
 	{
+		PROFILE_SCOPE("Render Update");
 		Cookie::ComponentManager<TransformComponent>* Transforms = m_World->GetComponentManager<TransformComponent>(TRANSFORM_ID);
 		Cookie::ComponentManager<MeshRenderComponent>* Meshes = GET_POOL(m_World, MeshRenderComponent, MESH_RENDER_ID);
 		for (Cookie::size_t i = 0; i < Meshes->Size; i++)

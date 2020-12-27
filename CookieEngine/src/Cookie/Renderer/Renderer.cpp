@@ -11,6 +11,8 @@
 namespace Cookie {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	Renderer::InstancedMesh* Renderer::m_MeshInstances = NULL;
+	uint32_t Renderer::m_NumMats = 0;
 
 	void Renderer::Init()
 	{
@@ -31,11 +33,13 @@ namespace Cookie {
 		m_SceneData->PointLightDiffuse = pointLight->Diffuse;
 		m_SceneData->DirectionalLightDirection = directionalLight->Direction;
 		m_SceneData->DirectionalLightDiffuse = directionalLight->Diffuse;
+		//delete[] m_MeshInstances;
+		//m_MeshInstances = new InstancedMesh[20];
+		//m_NumMats = 0;
 	}
 
 	void Renderer::EndScene()
 	{
-
 	}
 
 	void Renderer::Submit(const Ref<Shader> shader, const VertexArray* vertexArray, const mathfu::mat4& transform)
@@ -57,23 +61,44 @@ namespace Cookie {
 		shader->UploadUniformFloat3("u_DirectionalLightDiffuse", m_SceneData->DirectionalLightDiffuse);
 	}
 
-	void Renderer::DrawModel(const struct Model* model, class Material* material, const mathfu::mat4* transform)
+	Renderer::InstancedMesh* Renderer::GetMeshInstance(struct Mesh* mesh, class Material* material)
+	{
+		return NULL;
+	}
+
+	void Renderer::DrawModel(struct Model* model, class Material* material, const mathfu::mat4* transform)
 	{
 		for (size_t i = 0; i < model->NumMeshes; i++)
 		{
-			DrawMesh(const_cast<const Mesh*>(&(*model->Meshes)[i]), material, transform);
+			DrawMesh(&(*model->Meshes)[i], material, transform);
 		}
 	}
 
-	void Renderer::DrawMesh(const struct Mesh* mesh, class Material* material, const mathfu::mat4* transform)
+	void Renderer::DrawMesh(struct Mesh* mesh, class Material* material, const mathfu::mat4* transform)
 	{
+		/*MaterialInstance* instance = GetMaterialInstance(material);
+		CK_CORE_ASSERT(instance->VertexCount + mesh->NumVertices > 60000, "Trying to draw too many vertices in one material instance");
+		CK_CORE_ASSERT(instance->IndexCount + mesh->NumIndices > instance->MaxIndices, "Trying to draw too many indices in one material instance");
+		memcpy(instance->VertexBufferPtr, mesh->Vertices->GetData(), sizeof(mesh->Vertices->GetData()));
+		memcpy(instance->IndexBufferPtr, mesh->Indices->GetData(), sizeof(mesh->Indices->GetData()));
+		instance->VertexBufferPtr += mesh->NumVertices;
+		instance->IndexBufferPtr += mesh->NumIndices;
+		m_NumMats++;*/
+		mathfu::mat4 normalMat = transform->Inverse().Transpose();
 		material->GetShader()->Bind();
 		UploadSceneUniforms(&*material->GetShader());
 		material->GetShader()->UploadUniformMat4("u_Transform", *transform);
+		material->GetShader()->UploadUniformMat4("u_NormalTransform", normalMat);
 		material->UploadUniformData();
 		mesh->VAO->Bind();
 
 		RenderCommand::DrawIndexed(mesh->VAO, mesh->NumIndices);
+	}
+
+	void Renderer::SubmitInstanceMesh(struct Mesh* mesh, class Material* material, const mathfu::mat4* transform)
+	{
+		InstancedMesh* instance = GetMeshInstance(mesh, material);
+		
 	}
 
 }

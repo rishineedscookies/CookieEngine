@@ -6,6 +6,7 @@ layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_UV;
 
 uniform mat4 u_Transform;
+uniform mat4 u_NormalTransform;
 uniform mat4 u_ViewProjection;
 
 out vec3 v_Position;
@@ -14,7 +15,7 @@ out vec3 v_Normal;
 void main()
 {
     v_Position = (u_Transform * vec4(a_Position, 1.0)).xyz;
-    v_Normal =  mat3(transpose(inverse(u_Transform))) * a_Normal;
+    v_Normal =  mat3(u_NormalTransform) * a_Normal;
     gl_Position = u_ViewProjection * vec4(v_Position, 1.0);
 }
 

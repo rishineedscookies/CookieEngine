@@ -5,6 +5,7 @@
 #include "Cookie/Core/Log.h"
 
 #include "Cookie/Renderer/Renderer.h"
+#include "Cookie/Utility/Profiler.h"
 #include <GLFW/glfw3.h>
 
 namespace Cookie {
@@ -37,7 +38,7 @@ namespace Cookie {
 		m_Time.CurrentTime = (float) glfwGetTime();
 		while (m_Running)
 		{
-
+			PROFILE_SCOPE("Total Update");
 			m_Time.LastTime = m_Time.CurrentTime;
 			m_Time.CurrentTime = (float) glfwGetTime();
 			m_Time.DeltaTime = m_Time.CurrentTime - m_Time.LastTime;
@@ -50,14 +51,17 @@ namespace Cookie {
 				}
 			}
 
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
 			{
-				layer->OnImGuiRender();
-			}
-			m_ImGuiLayer->End();
+				PROFILE_SCOPE("ImGui Render");
+				m_ImGuiLayer->Begin();
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
 
-			m_Window->OnUpdate();
+				m_Window->OnUpdate();
+			}
 		}
 	}
 

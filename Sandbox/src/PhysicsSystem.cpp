@@ -6,6 +6,7 @@
 
 void PhysicsSystem::OnUpdate(Cookie::World* World, Cookie::Time* Time)
 {
+	PROFILE_SCOPE("Physics Update");
 	Cookie::ComponentManager<AABBColliderComponent>* AABBColliders = GET_POOL(World, AABBColliderComponent, AABB_COLLIDER_ID);
 	Cookie::ComponentManager<TransformComponent>* Transforms = GET_POOL(World, TransformComponent, TRANSFORM_ID);
 	for (int i = 0; i < AABBColliders->Size; i++)

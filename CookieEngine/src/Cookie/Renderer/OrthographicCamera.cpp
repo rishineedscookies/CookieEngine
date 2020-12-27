@@ -1,10 +1,11 @@
 #include "ckpch.h"
 #include "OrthographicCamera.h"
+#include <mathfu/constants.h>
 
 namespace Cookie {
 
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
-		: m_ProjectionMatrix(mathfu::mat4::Ortho(left, right, bottom, top, 0.01f, 1000.0f)), m_ViewMatrix(1.0f)
+		: m_ProjectionMatrix(mathfu::mat4::Perspective(mathfu::kPi / 8.0, right / top, 0.01f, 1000.0f)), m_ViewMatrix(1.0f)
 	{
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		m_Rotation = mathfu::quat::identity;

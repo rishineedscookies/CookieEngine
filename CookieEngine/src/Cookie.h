@@ -9,6 +9,8 @@
 
 #include "Cookie/Common/Vector.h"
 
+#include "Cookie/Utility/Profiler.h"
+
 #include "Cookie/Input/Input.h"
 #include "Cookie/Input/KeyCodes.h"
 
