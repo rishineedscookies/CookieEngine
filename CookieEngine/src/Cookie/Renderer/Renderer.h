@@ -3,29 +3,33 @@
 #include "RenderCommand.h"
 
 #include "OrthographicCamera.h"
+#include "Cookie/Common/Vector.h"
 #include "Shader.h"
 
 namespace Cookie {
 
 	class Renderer
 	{
-		struct InstancedMesh
+		struct MeshInstance
 		{
-			~InstancedMesh()
+			MeshInstance()
+				: Mat(NULL), Instance(NULL), NumInstances(0), ModelMatrices(new Vector<mathfu::mat4>(1)), NormalMatrices(new Vector<mathfu::mat4>(1))
+			{}
+
+			MeshInstance(class Material* mat, struct Mesh* mesh)
+				: Mat(mat), Instance(mesh), NumInstances(0), ModelMatrices(new Vector<mathfu::mat4>(1)), NormalMatrices(new Vector<mathfu::mat4>(1))
+			{}
+
+			~MeshInstance()
 			{
-				delete[] VertexBufferBase;
-				delete[] IndexBufferBase;
+				delete ModelMatrices;
+				delete NormalMatrices;
 			}
 			class Material* Mat;
 			struct Mesh* Instance;
-			const uint32_t MaxTris = 20000;
-			const uint32_t MaxIndices = MaxTris * 3;
-			uint32_t VertexCount = 0;
-			uint32_t IndexCount = 0;
-			struct Vertex* VertexBufferBase;
-			struct Vertex* VertexBufferPtr;
-			uint32_t* IndexBufferBase;
-			uint32_t* IndexBufferPtr;
+			uint32_t NumInstances;
+			Vector<mathfu::mat4>* ModelMatrices;
+			Vector<mathfu::mat4>* NormalMatrices;
 		};
 
 	public:
@@ -40,7 +44,7 @@ namespace Cookie {
 
 		static void DrawModel(struct Model* model, class Material* material, const mathfu::mat4* transform);
 		static void DrawMesh(struct Mesh* mesh, class Material* material, const mathfu::mat4* transform);
-		static void SubmitInstanceMesh(struct Mesh* mesh, class Material* material, const mathfu::mat4* transform);
+		static void SubmitMeshInstance(struct Mesh* mesh, class Material* material, const mathfu::mat4* transform);
 
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
@@ -49,7 +53,7 @@ namespace Cookie {
 
 		static void UploadSceneUniforms(Shader* shader);
 
-		static InstancedMesh* GetMeshInstance(struct Mesh* mesh, class Material* material);
+		static MeshInstance* GetMeshInstance(struct Mesh* mesh, class Material* material);
 
 	private:
 		struct SceneData {
@@ -64,8 +68,8 @@ namespace Cookie {
 		
 
 		static SceneData* m_SceneData;
-		static InstancedMesh* m_MeshInstances;
-		static uint32_t m_NumMats;
+		static MeshInstance* m_MeshInstances;
+		static uint32_t m_NumInstances;
 	};
 
 }

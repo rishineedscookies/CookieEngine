@@ -7,8 +7,10 @@ namespace Cookie {
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
+
+		OpenGLVertexBuffer();
 		OpenGLVertexBuffer(uint32_t count);
-		OpenGLVertexBuffer(float* vertices, uint32_t size);
+		OpenGLVertexBuffer(const void* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer();
 
 		virtual void SetData(const void* data, uint32_t size) override;

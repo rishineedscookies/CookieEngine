@@ -5,8 +5,6 @@
 #include <vectorial/vec4f.h>
 
 #include <imgui/imgui.h>
-#include "GreenMat.h"
-#include "RedMat.h"
 
 #include "PositionComponent.h"
 #include "AABBColliderComponent.h"
@@ -29,20 +27,27 @@ public:
 		m_ShaderManager.Load("assets/shaders/FlatColor.glsl");
 		m_ShaderManager.Load("assets/shaders/SimpleDiffuse.glsl", "Mesh");
 		m_ShaderManager.Load("assets/shaders/SimpleBlinnPhong.glsl", "BlinnPhong");
+		m_ShaderManager.Load("assets/shaders/InstancedBlinnPhong.glsl", "InstancedBlinnPhong");
 		m_TextureShader = Cookie::Shader::Create("assets/shaders/Texture.glsl");
 
 		m_Texture = Cookie::Texture2D::Create("assets/textures/HealthCross.png");
 		m_TextureShader->Bind();
 		m_TextureShader->UploadUniformInt("u_Texture", 0);
 
-		m_GreenMaterial = Cookie::CreateRef<GreenMat>("GreenMat", "BlinnPhong");
+		m_GreenMaterial = Cookie::CreateRef<Cookie::Material>("GreenMat", "BlinnPhong");
 		m_GreenMaterial->SetShader(m_ShaderManager.Get("BlinnPhong"));
-		m_RedMaterial = Cookie::CreateRef<RedMat>("RedMat", "Mesh");
-		m_RedMaterial->SetShader(m_ShaderManager.Get("Mesh"));
+		m_GreenMaterial->AddFloat4Property("u_Albedo", mathfu::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		m_InstancedRedMaterial = Cookie::CreateRef<Cookie::Material>("InstancedRedMat", "InstancedBlinnPhong");
+		m_InstancedRedMaterial->SetShader(m_ShaderManager.Get("InstancedBlinnPhong"));
+		m_InstancedRedMaterial->AddFloat4Property("u_Albedo", mathfu::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		m_RedMaterial = Cookie::CreateRef<Cookie::Material>("RedMat", "BlinnPhong");
+		m_RedMaterial->SetShader(m_ShaderManager.Get("BlinnPhong"));
+		m_RedMaterial->AddFloat4Property("u_Albedo", mathfu::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		m_MaterialManager.Add(m_GreenMaterial, "GreenMat");
+		m_MaterialManager.Add(m_InstancedRedMaterial, "InstancedRedMat");
 		m_MaterialManager.Add(m_RedMaterial, "RedMat");
 
-		m_CubeModel = m_ModelManager.LoadModel("assets/models/objcube.obj");
+		m_CubeModel = m_ModelManager.LoadInstancedModel("assets/models/objcube.obj");
 		m_Monkey = m_ModelManager.LoadModel("assets/models/monkey.obj");
 
 		m_World = new Cookie::World();
@@ -58,13 +63,6 @@ public:
 		m_MovementSystem = new MovementSystem();
 		m_FirstPersonCameraSystem = new FirstPersonCameraSystem();
 
-		{
-			Cookie::Entity Cube = m_World->AddEntity();
-			m_World->AddComponent<TransformComponent>(Cube, TRANSFORM_ID);
-			MeshRenderComponent* cubeModel = m_World->AddComponent<MeshRenderComponent>(Cube, MESH_RENDER_ID);
-			cubeModel->Model = m_Monkey;
-			cubeModel->Material = &*m_GreenMaterial;
-		}
 
 		{
 			m_Player = m_World->AddEntity();
@@ -87,6 +85,7 @@ public:
 			*m_FirstPersonCamera = FirstPersonCameraComponent(-1.6f, 1.6f, -0.9f, 0.9f);
 		}
 
+		CK_TRACE("Mouse Delta: {0}, {1}", InputSystem::DeltaMouseX, InputSystem::DeltaMouseY);
 
 		for (uint32_t floorX = 0; floorX < 20; floorX++)
 		{
@@ -95,7 +94,7 @@ public:
 				m_Floor = m_World->AddEntity();
 				MeshRenderComponent* mesh = m_World->AddComponent<MeshRenderComponent>(m_Floor, MESH_RENDER_ID);
 				mesh->Model = m_CubeModel;
-				mesh->Material = &*m_GreenMaterial;
+				mesh->Material = &*m_InstancedRedMaterial;
 				m_World->AddComponent<TransformComponent>(m_Floor, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(floorX, 0, floorY),
 					mathfu::mat3::Identity(),
 					mathfu::vec3(1.0f));
@@ -104,6 +103,14 @@ public:
 				FloorCollider->HalfExtents = mathfu::vec3(1.0f);
 			}
 		}
+
+		{
+			Cookie::Entity Monkey = m_World->AddEntity();
+			m_World->AddComponent<TransformComponent>(Monkey, TRANSFORM_ID)->Transform = mathfu::mat4::Transform(mathfu::vec3(5.0f, 2.5f, 4.0f), mathfu::mat3::Identity(), mathfu::vec3(1.0f));
+			MeshRenderComponent* cubeModel = m_World->AddComponent<MeshRenderComponent>(Monkey, MESH_RENDER_ID);
+			cubeModel->Model = m_Monkey;
+			cubeModel->Material = &*m_GreenMaterial;
+		}
 	}
 
 	void OnUpdate(Cookie::Time time) override
@@ -111,7 +118,6 @@ public:
 		PROFILE_SCOPE("SandboxApp::OnUpdate");
 
 		InputSystem::OnUpdate(m_World, &time);
-		CK_TRACE("Mouse Delta: {0}, {1}", InputSystem::DeltaMouseX, InputSystem::DeltaMouseY);
 		if (Cookie::Input::GetKeyDown(CK_KEY_Q))
 		{
 			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(0, 0, 1));
@@ -211,8 +217,8 @@ public:
 			strcat(label, " %.6fms");
 			ImGui::Text(label, result->Duration);
 		}
-		Cookie::Profiler::m_Count = 0;
 		ImGui::End();
+		Cookie::Profiler::m_Count = 0;
 	}
 
 	void RenderOnUpdate(Cookie::Time Time)
@@ -247,6 +253,7 @@ private:
 
 	Cookie::MaterialManager m_MaterialManager;
 	Cookie::Ref<Cookie::Material> m_GreenMaterial;
+	Cookie::Ref<Cookie::Material> m_InstancedRedMaterial;
 	Cookie::Ref<Cookie::Material> m_RedMaterial;
 
 	Cookie::ModelManager m_ModelManager;

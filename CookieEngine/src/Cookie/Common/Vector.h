@@ -36,6 +36,8 @@ namespace Cookie
 
 		void Reserve(size_t NewCapacity);
 
+		void Reduce(size_t NewCapacity);
+
 
 	private:
 
@@ -43,6 +45,23 @@ namespace Cookie
 		size_t Capacity;
 
 	};
+
+	template<typename T>
+	void Vector<T>::Reduce(size_t NewCapacity)
+	{
+		if (NewCapacity >= Capacity)
+			return;
+
+		T* temp = new T[NewCapacity];
+		for(size_t i = 0; i < NewCapacity; i++)
+		{
+			temp[i] = Arr[i];
+		}
+		delete[] Arr;
+		Arr = temp;
+		Capacity = NewCapacity;
+
+	}
 
 	template<typename T>
 	bool Vector<T>::TryAccess(size_t i, T* out)
@@ -132,7 +151,7 @@ namespace Cookie
 		{
 			temp[i] = Arr[i];
 		}
-		delete Arr;
+		delete[] Arr;
 		Arr = temp;
 		Capacity = NewCapacity;
 	}

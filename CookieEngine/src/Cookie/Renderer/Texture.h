@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Cookie/Core/Core.h"
+#include "Cookie/Common/Vector.h"
 
 namespace Cookie {
 
@@ -21,6 +22,12 @@ namespace Cookie {
 
 		static Ref<Texture2D> Create(const std::string& path);
 
+	};
+
+	class TextureManager
+	{
+	public:
+		Vector<Texture> m_Textures;
 	};
 
 }

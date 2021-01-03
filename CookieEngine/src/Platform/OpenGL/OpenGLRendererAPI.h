@@ -13,6 +13,7 @@ namespace Cookie {
 		virtual void Clear(const mathfu::vec4& color) const override;
 
 		virtual void DrawIndexed(const VertexArray* vertexArray, uint32_t count = 0) override;
+		virtual void DrawIndexedInstanced(const VertexArray* vertexArray, uint32_t count = 0, uint32_t instances = 0) override;
 
 	};
 

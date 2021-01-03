@@ -15,23 +15,16 @@ namespace Cookie
 		return NULL;
 	}
 
-	Model* MeshLoader::LoadModel(const std::string& path)
+	Model* MeshLoader::LoadModel(const std::string& path, bool bInstanced)
 	{
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-
-		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-		{
-			CK_CORE_ERROR("ERROR LOADING MODEL: {0}", importer.GetErrorString());
-			return NULL;
-		}
 		Model* model = new Model();
-		ProcessNode(scene->mRootNode, scene, model);
+		LoadModel(path, model, bInstanced);
 		return model;
 	}
 
-	void MeshLoader::LoadModel(const std::string& path, Model* model)
+	void MeshLoader::LoadModel(const std::string& path, Model* model, bool bInstanced)
 	{
+		model->bInstanced = bInstanced;
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -40,26 +33,26 @@ namespace Cookie
 			CK_CORE_ERROR("ERROR LOADING MODEL: {0}", importer.GetErrorString());
 			return;
 		}
-		ProcessNode(scene->mRootNode, scene, model);
+		ProcessNode(scene->mRootNode, scene, model, bInstanced);
 	}
 
-	void MeshLoader::ProcessNode(struct aiNode* node, const struct aiScene* scene, Model* model)
+	void MeshLoader::ProcessNode(struct aiNode* node, const struct aiScene* scene, Model* model, bool bInstanced)
 	{
 		for (uint32_t i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* loadedMesh = scene->mMeshes[node->mMeshes[i]];
 			Mesh* mesh = (*model->Meshes).At(i);
-			ProcessMesh(loadedMesh, scene, mesh);
+			ProcessMesh(loadedMesh, scene, mesh, bInstanced);
 			model->NumMeshes++;
 		}
 
 		for (uint32_t i = 0; i < node->mNumChildren; i++)
 		{
-			ProcessNode(node->mChildren[i], scene, model);
+			ProcessNode(node->mChildren[i], scene, model, bInstanced);
 		}
 	}
 
-	void MeshLoader::ProcessMesh(struct aiMesh* loadedMesh, const struct aiScene* scene, Mesh* mesh)
+	void MeshLoader::ProcessMesh(struct aiMesh* loadedMesh, const struct aiScene* scene, Mesh* mesh, bool bInstanced)
 	{
 		// Process vertices
 		for (uint32_t i = 0; i < loadedMesh->mNumVertices; i++)
@@ -95,6 +88,7 @@ namespace Cookie
 				mesh->NumIndices++;
 			}
 		}
+		mesh->bInstanced = bInstanced;
 		SetupMeshObjects(mesh);
 	}
 
@@ -105,13 +99,26 @@ namespace Cookie
 		mesh->VBO->SetLayout({
 				{ ShaderDataType::Float3, "a_Position"},
 				{ ShaderDataType::Float3, "a_Normal"},
-				{ ShaderDataType::Float2, "a_UV"}
+				{ ShaderDataType::Float2, "a_UV"},
 			});
 		mesh->VBO->SetData((void*) &(*mesh->Vertices)[0], mesh->NumIndices);
 		mesh->VAO = VertexArray::Create();
 		mesh->VAO->AddVertexBuffer(mesh->VBO);
 		mesh->EBO = IndexBuffer::Create(&(*mesh->Indices)[0], mesh->NumIndices);
 		mesh->VAO->SetIndexBuffer(mesh->EBO);
+
+		/*if (mesh->bInstanced)
+		{
+			mesh->InstancedModel = VertexBuffer::Create(400 * 64);
+			BufferLayout layout = BufferLayout({
+				{ ShaderDataType::Float4, "a_MVP", 0, false, 1},
+				{ ShaderDataType::Float4, "a_MVP", 16, false, 1},
+				{ ShaderDataType::Float4, "a_MVP", 32, false, 1},
+				{ ShaderDataType::Float4, "a_MVP", 48, false, 1}
+			}, 3);
+			mesh->InstancedModel->SetLayout(layout);
+			mesh->VAO->AddVertexBuffer(mesh->InstancedModel);
+		}*/
 	}
 
 }

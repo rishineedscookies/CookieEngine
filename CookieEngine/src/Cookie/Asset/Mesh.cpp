@@ -23,4 +23,18 @@ namespace Cookie
 		return model;
 	}
 
+	Model* ModelManager::LoadInstancedModel(const std::string& path)
+	{
+		if (Models.GetCapacity() <= NumModels)
+		{
+			Models.Reserve(NumModels * 2 + 1);
+		}
+		Model* model = *Models.At(NumModels);
+		model = new Model();
+		MeshLoader::LoadModel(path, model, true);
+		NumModels++;
+		return model;
+
+	}
+
 }

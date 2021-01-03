@@ -27,6 +27,11 @@ namespace Cookie {
 			s_RendererAPI->DrawIndexed(vertexArray, count);
 		}
 
+		inline static void DrawIndexedInstanced(const VertexArray* vertexArray, uint32_t count = 0, uint32_t instances = 0)
+		{
+			s_RendererAPI->DrawIndexedInstanced(vertexArray, count, instances);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

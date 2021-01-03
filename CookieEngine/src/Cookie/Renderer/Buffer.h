@@ -63,11 +63,12 @@ namespace Cookie
 		uint32_t Offset;
 		uint32_t Size;
 		bool Normalized;
+		uint32_t Divisor;
 
 		BufferElement() {}
 
-		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
-			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+		BufferElement(ShaderDataType type, const std::string& name, uint32_t offset = 0, bool normalized = false, uint32_t divisor = 0)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Divisor(divisor)
 		{}
 	};
 
@@ -77,13 +78,14 @@ namespace Cookie
 
 		BufferLayout() {}
 
-		BufferLayout(const std::initializer_list<BufferElement> elements)
-			: m_Elements(elements)
+		BufferLayout(const std::initializer_list<BufferElement> elements, uint32_t offset = 0)
+			: m_Elements(elements), m_Offset(offset)
 		{
 			CalculateOffsetsAndStride();
 		}
 
 		inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+		inline const uint32_t GetOffset() const { return m_Offset; }
 		inline const uint32_t GetStride() const { return m_Stride; }
 
 		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
@@ -98,6 +100,7 @@ namespace Cookie
 	private:
 		std::vector<BufferElement> m_Elements;
 		uint32_t m_Stride = 0;
+		uint32_t m_Offset = 0;
 	};
 
 	class VertexBuffer
@@ -105,8 +108,9 @@ namespace Cookie
 	public:
 		virtual ~VertexBuffer() {}
 
+		static VertexBuffer* Create();
 		static VertexBuffer* Create(uint32_t count);
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static VertexBuffer* Create(const void* vertices, uint32_t size);
 
 		virtual void SetData(const void* data, uint32_t size) = 0;
 

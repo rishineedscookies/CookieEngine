@@ -18,7 +18,7 @@ namespace Cookie {
 		}
 	}
 
-	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
+	VertexBuffer* VertexBuffer::Create(const void* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -41,6 +41,21 @@ namespace Cookie {
 			return nullptr;
 		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(count);
+		default:
+			return nullptr;
+		}
+
+	}
+
+	VertexBuffer* VertexBuffer::Create()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			CK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return new OpenGLVertexBuffer();
 		default:
 			return nullptr;
 		}

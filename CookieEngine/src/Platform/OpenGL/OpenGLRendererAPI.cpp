@@ -26,6 +26,7 @@ namespace Cookie {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, int32_t y, uint32_t width, uint32_t height)
@@ -42,6 +43,11 @@ namespace Cookie {
 	void OpenGLRendererAPI::DrawIndexed(const VertexArray* vertexArray, uint32_t count)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLRendererAPI::DrawIndexedInstanced(const VertexArray* vertexArray, uint32_t count, uint32_t instances)
+	{	
+		glDrawElementsInstanced(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, NULL, instances);
 	}
 
 }

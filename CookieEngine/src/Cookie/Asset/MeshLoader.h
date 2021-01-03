@@ -18,13 +18,13 @@ namespace Cookie
 
 		static Mesh* LoadMesh(const std::string& path);
 		
-		static Model* LoadModel(const std::string& path);
+		static Model* LoadModel(const std::string& path, bool bInstanced = false);
 
-		static void LoadModel(const std::string& path, Model* model);
-	
-		static void ProcessNode(aiNode* node, const aiScene* scene, Model* model);
+		static void LoadModel(const std::string& path, Model* model, bool bInstanced = false);
+
+		static void ProcessNode(aiNode* node, const aiScene* scene, Model* model, bool bInstanced = false);
 			
-		static void ProcessMesh(aiMesh* loadedMesh, const aiScene* scene, Mesh* mesh);
+		static void ProcessMesh(aiMesh* loadedMesh, const aiScene* scene, Mesh* mesh, bool bInstanced = false);
 
 		static void SetupMeshObjects(Mesh* mesh);
 

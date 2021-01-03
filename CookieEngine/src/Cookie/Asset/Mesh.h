@@ -21,13 +21,15 @@ namespace Cookie
 	struct Mesh
 	{
 		Mesh() :
-		Vertices(new Vector<Vertex>(1)),
-		NumVertices(0),
-		Indices(new Vector<uint32_t>(1)),
-		NumIndices(0),
-		VAO(NULL),
-		VBO(NULL),
-		EBO(NULL)
+			Vertices(new Vector<Vertex>(1)),
+			NumVertices(0),
+			Indices(new Vector<uint32_t>(1)),
+			NumIndices(0),
+			VAO(NULL),
+			VBO(NULL),
+			EBO(NULL),
+			InstancedModel(NULL),
+			InstancedNormal(NULL)
 		{}
 
 		Vector<Vertex>* Vertices = new Vector<Vertex>(1);
@@ -37,12 +39,16 @@ namespace Cookie
 		VertexArray* VAO = NULL;
 		VertexBuffer* VBO = NULL;
 		IndexBuffer* EBO = NULL;
+		bool bInstanced = false;
+		VertexBuffer* InstancedModel = NULL;
+		VertexBuffer* InstancedNormal = NULL;
 	};
 
 	struct Model
 	{
 		Vector<Mesh>* Meshes = new Vector<Mesh>(1);
 		uint32_t NumMeshes = 0;
+		bool bInstanced = false;
 	};
 
 	struct ModelManager
@@ -53,6 +59,7 @@ namespace Cookie
 		~ModelManager();
 
 		Model* LoadModel(const std::string& path);
+		Model* LoadInstancedModel(const std::string& path);
 	};
 
 

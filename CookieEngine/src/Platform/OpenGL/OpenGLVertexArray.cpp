@@ -42,13 +42,14 @@ namespace Cookie {
 		CK_CORE_ASSERT(layout.GetElements().size(), "Vertex buffer layout is empty!");
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i,
+			glEnableVertexAttribArray(i + layout.GetOffset());
+			glVertexAttribPointer(i + layout.GetOffset(),
 				GetComponentCount(element.Type),
 				GetGLEnumFromType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
-				(const void*)element.Offset);
+				(const void*) element.Offset);
+			glVertexAttribDivisor(i + layout.GetOffset(), element.Divisor);
 			i++;
 		}
 		m_VertexBuffers.push_back(const_cast<VertexBuffer*>(vertexBuffer));
