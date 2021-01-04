@@ -10,7 +10,7 @@ namespace Cookie {
 	{
 	public:
 		OpenGLVertexArray();
-		virtual ~OpenGLVertexArray() {}
+		virtual ~OpenGLVertexArray();
 
 		virtual void AddVertexBuffer(const VertexBuffer* vertexBuffer) override;
 		virtual void SetIndexBuffer(const IndexBuffer* indexBuffer)  override;

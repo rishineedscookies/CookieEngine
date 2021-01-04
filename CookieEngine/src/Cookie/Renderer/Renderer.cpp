@@ -66,15 +66,10 @@ namespace Cookie {
 			vao->SetIndexBuffer(inst->Instance->EBO);
 			vao->AddVertexBuffer(inst->Instance->VBO);
 			vao->AddVertexBuffer(instanceVertexBuffer);
-			inst->Instance->VAO->AddVertexBuffer(instanceVertexBuffer);
-			//inst->Instance->InstancedModel->Bind();
-			//glBufferData(GL_ARRAY_BUFFER, 0, inst->ModelMatrices->GetData(), inst->NumInstances * 64);
-			//inst->Instance->InstancedModel->SetData(inst->ModelMatrices->GetData(), inst->NumInstances * sizeof(mathfu::mat4));
-			//inst->Instance->VAO->Bind();
 
 			RenderCommand::DrawIndexedInstanced(inst->Instance->VAO, inst->Instance->NumIndices, inst->NumInstances);
 			
-			inst->Instance->VAO->Unbind();
+			vao->Unbind();
 			delete instanceVertexBuffer;
 			delete vao;
 		}

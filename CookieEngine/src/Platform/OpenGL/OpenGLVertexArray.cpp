@@ -32,6 +32,11 @@ namespace Cookie {
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
+	OpenGLVertexArray::~OpenGLVertexArray()
+	{
+		glDeleteVertexArrays(1, &m_RendererID);
+	}
+
 	void OpenGLVertexArray::AddVertexBuffer(const VertexBuffer* vertexBuffer)
 	{
 		glBindVertexArray(m_RendererID);

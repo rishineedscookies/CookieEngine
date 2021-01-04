@@ -118,63 +118,12 @@ public:
 		PROFILE_SCOPE("SandboxApp::OnUpdate");
 
 		InputSystem::OnUpdate(m_World, &time);
-		if (Cookie::Input::GetKeyDown(CK_KEY_Q))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(0, 0, 1));
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_E))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(-m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(0, 0, 1));
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_R))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(0, 1, 0));
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_F))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(-m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(0, 1, 0));
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_T))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(1, 0, 0));
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_G))
-		{
-			m_CameraRotation = m_CameraRotation * mathfu::quat::FromAngleAxis(-m_CameraRotSpeed * time.DeltaTime, mathfu::vec3(1, 0, 0));
-		}
-
-		if (Cookie::Input::GetKeyDown(CK_KEY_W))
-		{
-			m_CameraPosition += m_CameraRotation * mathfu::vec3(0, 1, 0) * m_CameraSpeed * time.DeltaTime;
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_A))
-		{
-			m_CameraPosition -= m_CameraRotation * mathfu::vec3(1, 0, 0) * m_CameraSpeed * time.DeltaTime;
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_S))
-		{
-			m_CameraPosition -= m_CameraRotation * mathfu::vec3(0, 1, 0) * m_CameraSpeed * time.DeltaTime;
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_D))
-		{
-			m_CameraPosition += m_CameraRotation * mathfu::vec3(1, 0, 0) * m_CameraSpeed * time.DeltaTime;
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_Z))
-		{
-			m_CameraPosition += m_CameraRotation * mathfu::vec3(0, 0, 1) * m_CameraSpeed * time.DeltaTime;
-		}
-		if (Cookie::Input::GetKeyDown(CK_KEY_X))
-		{
-			m_CameraPosition -= m_CameraRotation * mathfu::vec3(0, 0, 1) * m_CameraSpeed * time.DeltaTime;
-		}
 		m_FirstPersonCameraSystem->OnUpdate(m_World, &time);
 		m_MovementSystem->OnUpdate(m_World, &time);
 		//m_PhysicsSystem->OnUpdate(m_World, &time);
 
 		Cookie::RenderCommand::Clear(mathfu::vec4(0.6f, 0.14f, 0.29f, 1.0f));
 
-		//m_Camera.SetPosition(m_CameraPosition);
-		//m_Camera.SetRotation(m_CameraRotation);
 		Cookie::PointLight light = Cookie::PointLight(mathfu::vec3(3.0f), mathfu::vec3(0.0f, 0.0f, 0.0f));
 		Cookie::DirectionalLight dirLight = Cookie::DirectionalLight(mathfu::vec3(0.2f, -1.0f, -0.3f), mathfu::vec3(0.5f, 0.5f, 0.6f));
 		Cookie::Renderer::BeginScene(m_FirstPersonCamera->Camera, &light, &dirLight);
